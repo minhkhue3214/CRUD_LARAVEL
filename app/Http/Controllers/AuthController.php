@@ -30,7 +30,6 @@ class AuthController extends Controller
         }
 
         return redirect('login')->withErrors(['error' => 'Your email and password are not match']);
-        // dd($request->all());
     }
     
     public function logout(){
@@ -40,6 +39,7 @@ class AuthController extends Controller
     }
 
     public function dashboard(){
+        dd(Auth::check());
         if(Auth::check()){
             return view('dashboard');
         }

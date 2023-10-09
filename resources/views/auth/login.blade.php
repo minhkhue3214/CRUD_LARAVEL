@@ -17,19 +17,6 @@
                 <div class="col-md-8 offset-2">
                     <h2>Login Page</h2>
 
-
-                    {{-- @if (Session::has('error'))
-                        <div id="danger-alert" class="alert alert-danger" role="alert">
-                            {{ $errors->first('error') }}
-                        </div>
-                        <script>
-                            setTimeout(function() {
-                                document.getElementById('danger-alert').style.display = 'none';
-                            }, 5000); // 5000 milliseconds (5 giây)
-                        </script>
-                    @endif --}}
-
-
                     @if ($errors->has('error'))
                         <div id="danger-alert" class="alert alert-danger">{{ $errors->first('error') }}</div>
                     @endif
@@ -37,7 +24,7 @@
                     <script>
                         setTimeout(function() {
                             document.getElementById('danger-alert').style.display = 'none';
-                        }, 3000); 
+                        }, 3000);
                     </script>
 
 
@@ -48,14 +35,20 @@
                             <div class="col-md-8">
                                 <input type="text" name="email" class="form-control"
                                     placeholder="Enter your email">
+                                @error('email')
+                                    <span style="color:red">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label class="col-md-4">Password</label>
                             <div class="col-md-8">
-                                <input type="text" name="password" class="form-control"
+                                <input type="password" name="password" class="form-control"
                                     placeholder="Enter your password">
+                                @error('password')
+                                    <span style="color:red">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 

@@ -13,7 +13,7 @@
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">PRODUCT MANAGEMNT</a>
+      <a class="navbar-brand" href="{{ route('products') }}">PRODUCT MANAGEMNT</a>
     </div>
 
     <ul class="nav navbar-nav navbar-right">
@@ -23,6 +23,7 @@
       @else          
       <li><a href="{{ url('logout') }}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>          
       @endguest
+
     </ul>
   </div>
 </nav>

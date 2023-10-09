@@ -11,33 +11,41 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::check()) {
+            $search = $request['search'] ?? "";
+            if($search != ""){
+                $products = Product::where("title","LIKE","%$search%")->orWhere("product_code","LIKE","%$search%")->orderBy('created_at', 'DESC')->paginate(5);
+            }else{
+                $products = Product::orderBy('created_at', 'DESC')->paginate(5); 
+            }
             
-            $product = Product::orderBy('created_at', 'DESC')->get();
-            // dd($product);
-            return view('dashboard',compact('product'));
-        }
-
-    }
-
-    public function searchProducts(Request $request)
-    {
-        if($request->search){
-            $product = Product::where("name","LIKE","%".$request->search."")->latest();
-            return view('dashboard',compact('product'));
+            $data = compact("products","search");
+            return view('dashboard')->with($data);
         }else{
-            return redirect()->back()->with("message","empty search");
+            return redirect('login')->withErrors(['error' => 'please login to access the dashboard page']);
         }
+
     }
+
+    // public function searchProducts()
+    // {
+    //     $search_text = $_GET["query"];
+    //     $products = Product::Where("name","LIKE","%".$search_text."%")->get(); 
+    //     return view('dashboard',compact('products'));
+    // }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('products.create');
+        if (Auth::check()) {
+            return view('products.create');
+        }else{
+            return redirect('login')->withErrors(['error' => 'please login to access the dashboard page']);
+        }
     }
 
     /**
@@ -45,17 +53,24 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        // dd($request);
+        
         $request->validate([
             "title" =>"required",
-            "price" =>"required",  
+            "price" =>"required|integer",  
             "product_code" =>"required",  
             "description" =>"required",  
         ]);
-        $data = $request->except(['_token']);
-        Product::create($data);
 
-        // Product::create($request->all());
+        // $this->data['errorMessage'] = "Vui lòng kiểm tra lại thông tin";
+
+        //handle add product to database
+        Product::create([
+            'title'=> $request->input('title'),
+            'price'=> $request->input('price'),
+            'product_code'=> $request->input('product_code'),
+            'description'=> $request->input('description'),
+        ]);
 
         return redirect()
             ->route('products')
@@ -63,20 +78,16 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        $product = Product::findOrFail($id);
-        return view('products.edit',compact('product'));
+        if (Auth::check()) {
+            $product = Product::findOrFail($id);
+            return view('products.edit',compact('product'));
+        }else{
+            return redirect('login')->withErrors(['error' => 'please login to access the dashboard page']);
+        }
     }
 
     /**
@@ -86,12 +97,20 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $data = $request->except(['_token']); // Loại bỏ trường _token ra khỏi dữ liệu
+        $request->validate([
+            "title" =>"required",
+            "price" =>"required",  
+            "product_code" =>"required",  
+            "description" =>"required",  
+        ]);
         
-        $product->update($data); // Sử dụng dữ liệu đã loại bỏ _token
-        
-        return redirect()->route('products')->with('success', "Product updated successfully");
-        
+        $product->update([
+            'title'=> $request->input('title'),
+            'price'=> $request->input('price'),
+            'product_code'=> $request->input('product_code'),
+            'description'=> $request->input('description'),
+        ]); 
+        return redirect()->route('products')->with('success', "Product updated successfully");  
     }
 
     /**
