@@ -14,7 +14,7 @@
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
-        <a type="button" class="btn btn-success" href="{{ url('create-package') }}">ADD PACKAGE</a>
+        <a type="button" class="btn btn-success" href="{{ url('packages/create') }}">ADD PACKAGE</a>
 
         @if (Session::has('success'))
             <div id="success-alert" class="alert alert-success" role="alert">
@@ -53,10 +53,10 @@
                                     {{-- <button type="button" class="btn btn-danger m-0" data-toggle="modal"
                                         data-target="#myModal">Delete</button> --}}
                                     <div class="modal-footer">
-                                        <form action="{{ route('package.delete', $pr->id) }}" method="POST">
-                                            <a type="button" href="{{ route('package.show', $pr->id) }}"
+                                        <form action="{{ route('packages.destroy', $pr->id) }}" method="POST">
+                                            <a type="button" href="{{ route('packages.show', $pr->id) }}"
                                                 class="btn btn-primary">Detail</a>
-                                            <a type="button" href="{{ route('package.edit', $pr->id) }}"
+                                            <a type="button" href="{{ route('packages.edit', $pr->id) }}"
                                                 class="btn btn-success">Edit</a>
                                             @csrf
                                             @method('DELETE')
@@ -68,7 +68,7 @@
                         </tr>
 
                         {{-- Delete Modal --}}
-                        <div class="modal fade" id="myModal" role="dialog">
+                        {{-- <div class="modal fade" id="myModal" role="dialog">
                             <div class="modal-dialog modal-sm">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -86,7 +86,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     @endforeach
                 @else
                     <tr>

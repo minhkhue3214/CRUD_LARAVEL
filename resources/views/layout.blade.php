@@ -16,8 +16,8 @@
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="{{ route('products') }}">PRODUCT MANAGEMNT</a>
-                <a class="navbar-brand" href="{{ route('products.package') }}">PACKAGING MANAGEMET</a>
+                <a class="navbar-brand" href="{{ route('products.index') }}">PRODUCT MANAGEMENT</a>
+                <a class="navbar-brand" href="{{ route('packages.index') }}">PACKAGING MANAGEMENT</a>
             </div>
 
             <ul class="nav navbar-nav navbar-right">

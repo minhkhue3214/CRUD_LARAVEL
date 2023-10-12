@@ -19,42 +19,32 @@ use Illuminate\Support\Facades\Route;
 Route::get('/',[AuthController::class,"index"]);
 Route::get('login',[AuthController::class,"index"])->name('login');
 Route::post('post-login',[AuthController::class,"postLogin"])->name('login.post');
-
-//todo
 Route::get('logout',[AuthController::class,"logout"])->name('logout');
 
-Route::middleware('auth')->get('products',[ProductController::class,"index"])->name('products');
-Route::middleware('auth')->get('products-package',[ProductPackageController::class,"index"])->name('products.package');
-Route::middleware('auth')->get('create-package',[ProductPackageController::class,"create"])->name('package.create');
-Route::middleware('auth')->post('store-package',[ProductPackageController::class,"store"])->name('package.store');
 
-
-// Route::get('search',[ProductController::class,"searchProducts"])->name('products.search');
-Route::get('products-create',[ProductController::class,"create"])->name('products.create');
-Route::post('products-store',[ProductController::class,"store"])->name('products.store');
-
-Route::middleware('product')->group(function () {
-    
-    Route::delete('destroy/{id}',[ProductController::class,"destroy"])->name('products.destroy');
-    Route::get('show/{id}',[ProductController::class,"show"])->name('products.show');
-    
-    
-    Route::get('edit/{id}',[ProductController::class,"edit"])->name('products.edit');
-    Route::put('edit/{id}',[ProductController::class,"update"])->name('products.update');
-});
-
-Route::get('show-package/{id}',[ProductPackageController::class,"show"])->name('package.show');
-Route::delete('delete-package/{id}',[ProductPackageController::class,"destroy"])->name('package.delete');
-
-Route::get('edit-package/{id}',[ProductPackageController::class,"edit"])->name('package.edit');
 Route::put('edit-package/{id}',[ProductPackageController::class,"update"])->name('package.update');
 
-// Route::prefix('categories')->name('categories.')->group(function () {
-//     Route::get('/', [CategoryController::class, 'cIndex'])->name('index');
-//     Route::get('/create', [CategoryController::class, 'cCreate'])->name('create');
-//     Route::post('/store', [CategoryController::class, 'cStore'])->name('store');
-//     Route::get('/{categoryId}/edit', [CategoryController::class, 'cEdit'])->name('edit');
-//     Route::put('/{categoryId}/update', [CategoryController::class, 'cUpdate'])->name('update');
-//     Route::delete('/{categoryId}/destroy', [CategoryController::class, 'cDestroy'])->name('destroy');
-// });
+Route::prefix('products')->name('products.')->middleware(['auth'])->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('index');
+    Route::get('/create', [ProductController::class, 'create'])->name('create');
+    Route::post('/store', [ProductController::class, 'store'])->name('store');
+
+    Route::middleware(['product'])->group(function () {
+        Route::get('/{productId}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::put('/{productId}/update', [ProductController::class, 'update'])->name('update');
+        Route::delete('/{productId}/destroy',[ProductController::class,"destroy"])->name('destroy');
+        Route::get('/{productId}/show',[ProductController::class,"show"])->name('show');
+    });
+    
+});
+
+Route::prefix('packages')->name('packages.')->middleware(['auth'])->group(function () {
+    Route::get('/', [ProductPackageController::class, 'index'])->name('index');
+    Route::get('/create',[ProductPackageController::class,"create"])->name('create');
+    Route::post('/store',[ProductPackageController::class,"store"])->name('store');
+    Route::get('/{packagesId}/edit',[ProductPackageController::class,"edit"])->name('edit');
+    Route::put('/{packagesId}/update',[ProductPackageController::class,"update"])->name('update');
+    Route::delete('/{packagesId}/destroy',[ProductPackageController::class,"destroy"])->name('destroy');
+    Route::middleware(['package'])->get('/{packagesId}/show',[ProductPackageController::class,"show"])->name('show');
+});
 

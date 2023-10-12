@@ -74,7 +74,7 @@ class ProductPackageController extends Controller
         // dd($Package);
 
         return redirect()
-        ->route('products.package')
+        ->route('packages.index')
         ->with('success', 'Product Package added successfully');
     }
 
@@ -86,7 +86,7 @@ class ProductPackageController extends Controller
 
         product_relationship::where("product_package_id", $id)->delete();
         return redirect()
-        ->route('products.package')
+        ->route('packages.index')
         ->with('success', 'Product Package deleted successfully');
     }
 

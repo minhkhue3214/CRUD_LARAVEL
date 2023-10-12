@@ -5,8 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\ProductPackage;
 
-class ProductPackage
+class PackageMiddleware
 {
     /**
      * Handle an incoming request.
@@ -15,6 +16,10 @@ class ProductPackage
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $id = $request->packagesId;
+        $package = ProductPackage::findOrFail($id);
+        $request->merge(['package' => $package]);
+        
         return $next($request);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Product\Create;
 use App\Http\Requests\Product\Update;
 use App\Models\Product;
+use App\Models\product_relationship;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +57,7 @@ class ProductController extends Controller
         // dd($products);
 
         return redirect()
-            ->route('products')
+            ->route('products.index')
             ->with('success', 'Product added successfully');
     }
 
@@ -84,7 +85,7 @@ class ProductController extends Controller
             'product_code'=> $request->input('product_code'),
             'description'=> $request->input('description'),
         ]); 
-        return redirect()->route('products')->with('success', "Product updated successfully");  
+        return redirect()->route('products.index')->with('success', "Product updated successfully");  
     }
 
     /**
@@ -92,10 +93,11 @@ class ProductController extends Controller
      */
     public function destroy(Request $request)
     {
-        dd($request->product);
+        // dd($request->product->id);
+        product_relationship::where('product_id', $request->product->id)->delete();
         $product = $request->product;
         $product->delete();
 
-        return redirect()->route('products')->with('success',"product deleted successfully");
+        return redirect()->route('products.index')->with('success',"product deleted successfully");
     }
 }

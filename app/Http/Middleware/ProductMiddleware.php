@@ -16,7 +16,8 @@ class ProductMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $id = $request->id;
+        // dd($request);
+        $id = $request->productId;
         $product = Product::findOrFail($id);
 
         $request->merge(['product' => $product]);

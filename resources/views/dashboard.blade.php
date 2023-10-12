@@ -14,7 +14,7 @@
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
-        <a type="button" class="btn btn-success" href="{{ url('products-create') }}">ADD PRODUCT</a>
+        <a type="button" class="btn btn-success" href="{{ url('products/create') }}">ADD PRODUCT</a>
 
         @if (Session::has('success'))
             <div id="success-alert" class="alert alert-success" role="alert">
@@ -76,7 +76,7 @@
                                         <h4 class="modal-title">Bạn có muốn xoá bản ghi này</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <form action="{{ route('products.destroy', $pr->id) }}" method="POST">
+                                        <form action="{{ route('products.destroy', ['productId' => $pr->id]) }}" method="POST">
                                             <button type="button" class="btn btn-default"
                                                 data-dismiss="modal">Close</button>
                                             @csrf
