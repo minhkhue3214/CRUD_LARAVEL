@@ -54,7 +54,7 @@
 
                         <div class="form-group row">
                             <div class="col-md-8">
-                                <input type="submit" name="submit" class="btn btn-success" placeholder="Submit">
+                                <button type="submit" name="submit" class="btn btn-success">Login</button>
                             </div>
                         </div>
 

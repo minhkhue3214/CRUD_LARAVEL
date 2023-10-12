@@ -39,11 +39,11 @@ class AuthController extends Controller
     }
 
     public function dashboard(){
-        dd(Auth::check());
+        // dd(Auth::check());
         if(Auth::check()){
             return view('dashboard');
         }
-        return redirect('login')->withSuccess('please login to access the dashboard page');
+        return redirect('login')->withSuccess('Please login to access the dashboard page');
     }
 
 }

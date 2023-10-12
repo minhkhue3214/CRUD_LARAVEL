@@ -4,17 +4,17 @@
     <div class="container">
 
         <div class="flex-row">
-            <h2>Quản lý sản phẩm</h2>
+            <h2>Quản lý gói sản phẩm</h2>
         </div>
 
         <form action="" class="col-9">
             <div class="input-group">
                 <input type="search" name="search" style="width: 500px" id="" class="form-control"
-                    placeholder="Tìm kiếm bằng tên hoặc mã sản phẩm" value="{{ $search }}">
+                    placeholder="Tìm kiếm bằng tên gói sản phẩm">
                 <button class="btn btn-primary" type="submit">Search</button>
             </div>
         </form>
-        <a type="button" class="btn btn-success" href="{{ url('products-create') }}">ADD PRODUCT</a>
+        <a type="button" class="btn btn-success" href="{{ url('create-package') }}">ADD PACKAGE</a>
 
         @if (Session::has('success'))
             <div id="success-alert" class="alert alert-success" role="alert">
@@ -32,37 +32,37 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>Id sản phẩm</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Giá sản phẩm</th>
-                    <th>Mã sản phẩm</th>
-                    <th>Mô tả sản phẩm</th>
+                    <th>ID gói sản phẩm</th>
+                    <th>Tên gói sản phẩm</th>
+                    <th>Giá gói sản phẩm</th>
+                    <th>Mô tả gói sản phẩm</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
-                @if ($products->count() > 0)
-                    @foreach ($products as $pr)
+                @if ($packages->count() > 0)
+                    @foreach ($packages as $pr)
                         <tr>
                             <td>{{ $pr->id }}</td>
+                            <td>{{ $pr->package_name }}</td>
+                            <td>testing</td>
+                            <td>{{ $pr->package_description }}</td>
                             <td>{{ $pr->title }}</td>
-                            <td>{{ $pr->price }}</td>
-                            <td>{{ $pr->product_code }}</td>
-                            <td>{{ substr($pr->description, 0, 60) }}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     {{-- <button type="button" class="btn btn-danger m-0" data-toggle="modal"
                                         data-target="#myModal">Delete</button> --}}
-                                    <form action="{{ route('products.destroy', $pr->id) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <a type="button" href="{{ route('products.show', $pr->id) }}"
-                                            class="btn btn-primary">Detail</a>
-                                        <a type="button" href="{{ route('products.edit', $pr->id) }}"
-                                            class="btn btn-success">Edit</a>
-                                        <button class="btn btn-danger" type="submit">Delete</button>
-                                    </form>
+                                    <div class="modal-footer">
+                                        <form action="{{ route('package.delete', $pr->id) }}" method="POST">
+                                            <a type="button" href="{{ route('package.show', $pr->id) }}"
+                                                class="btn btn-primary">Detail</a>
+                                            <a type="button" href="{{ route('package.edit', $pr->id) }}"
+                                                class="btn btn-success">Edit</a>
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger m-0">Delete</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -76,7 +76,7 @@
                                         <h4 class="modal-title">Bạn có muốn xoá bản ghi này</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <form action="{{ route('products.destroy', $pr->id) }}" method="POST">
+                                        <form action="{{ route('package.delete', $pr->id) }}" method="POST">
                                             <button type="button" class="btn btn-default"
                                                 data-dismiss="modal">Close</button>
                                             @csrf
@@ -90,7 +90,7 @@
                     @endforeach
                 @else
                     <tr>
-                        <td class="text-center" colspan="5">Product not found</td>
+                        <td class="text-center" colspan="5">Không tìm thấy gói sản phẩm nào</td>
                     </tr>
                 @endif
             </tbody>
@@ -98,11 +98,9 @@
 
         {{-- Pagination --}}
         <div class="row">
-            {{ $products->links() }}
+            {{ $packages->links() }}
         </div>
     </div>
-
-
 @endsection
 
 <style>

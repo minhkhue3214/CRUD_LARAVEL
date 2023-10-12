@@ -39,8 +39,8 @@
             </div>
             <div class="mb-3">
                 <label for="exampleInputPrice" class="form-label">Description</label>
-                <input type="text" name="description" class="form-control" value="{{ $product->description }}"
-                    placeholder="Enter your description">
+                <textarea type="text" name="description" class="form-control" rows="5" id="comment"
+                    placeholder="Enter your description">{{ $product->description }}</textarea>
                 @error('description')
                     <span style="color:red">{{ $message }}</span>
                 @enderror
