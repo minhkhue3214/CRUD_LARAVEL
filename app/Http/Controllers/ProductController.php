@@ -24,12 +24,14 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request['search'] ?? "";
-        if($search != ""){
-            $products = Product::where("title","LIKE","%$search%")->orWhere("product_code","LIKE","%$search%")->orderBy('created_at', 'DESC')->paginate(5);
-        }else{
-            $products = Product::orderBy('created_at', 'DESC')->paginate(5); 
-        }
+        // if($search != ""){
+        //     $products = Product::where("title","LIKE","%$search%")->orWhere("product_code","LIKE","%$search%")->orderBy('created_at', 'DESC')->paginate(5);
+        // }else{
+        //     $products = Product::orderBy('created_at', 'DESC')->paginate(5); 
+        // }
         
+        $products = $this->productService->index($request);
+
         $data = compact("products","search");
         return view('dashboard')->with($data);
     }
@@ -54,8 +56,6 @@ class ProductController extends Controller
     {
         $products = $this->productService->create($request);
 
-        // dd($products);
-
         return redirect()
             ->route('products.index')
             ->with('success', 'Product added successfully');
@@ -73,18 +73,22 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Update $request, string $id)
+    public function update(Update $request)
     {
         // $products = $this->productService->update($request);
-        // dd($request);
-        $product = $request->product;
+        // $product = $request->product;
         
-        $product->update([
-            'title'=> $request->input('title'),
-            'price'=> $request->input('price'),
-            'product_code'=> $request->input('product_code'),
-            'description'=> $request->input('description'),
-        ]); 
+        // dd($product);
+        // $product->update([
+        //     'title'=> $request->input('title'),
+        //     'price'=> $request->input('price'),
+        //     'product_code'=> $request->input('product_code'),
+        //     'description'=> $request->input('description'),
+        // ]);
+
+        // dd($request->product->id);
+        // dd($productUpdated);
+        $productUpdated = $this->productService->update($request);
         return redirect()->route('products.index')->with('success', "Product updated successfully");  
     }
 
@@ -94,10 +98,11 @@ class ProductController extends Controller
     public function destroy(Request $request)
     {
         // dd($request->product->id);
+        // $product = $request->product;
+        // $product->delete();
         product_relationship::where('product_id', $request->product->id)->delete();
-        $product = $request->product;
-        $product->delete();
 
+        $this->productService->delete($request);
         return redirect()->route('products.index')->with('success',"product deleted successfully");
     }
 }

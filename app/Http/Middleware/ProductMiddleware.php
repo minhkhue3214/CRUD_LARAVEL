@@ -19,6 +19,7 @@ class ProductMiddleware
         // dd($request);
         $id = $request->productId;
         $product = Product::findOrFail($id);
+        // dd($product);
 
         $request->merge(['product' => $product]);
 

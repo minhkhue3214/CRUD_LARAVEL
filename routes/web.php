@@ -42,9 +42,12 @@ Route::prefix('packages')->name('packages.')->middleware(['auth'])->group(functi
     Route::get('/', [ProductPackageController::class, 'index'])->name('index');
     Route::get('/create',[ProductPackageController::class,"create"])->name('create');
     Route::post('/store',[ProductPackageController::class,"store"])->name('store');
-    Route::get('/{packagesId}/edit',[ProductPackageController::class,"edit"])->name('edit');
-    Route::put('/{packagesId}/update',[ProductPackageController::class,"update"])->name('update');
-    Route::delete('/{packagesId}/destroy',[ProductPackageController::class,"destroy"])->name('destroy');
-    Route::middleware(['package'])->get('/{packagesId}/show',[ProductPackageController::class,"show"])->name('show');
+
+    Route::middleware(['package'])->group(function () {
+        Route::get('/{packagesId}/edit',[ProductPackageController::class,"edit"])->name('edit');
+        Route::put('/{packagesId}/update',[ProductPackageController::class,"update"])->name('update');
+        Route::delete('/{packagesId}/destroy',[ProductPackageController::class,"destroy"])->name('destroy');
+        Route::get('/{packagesId}/show',[ProductPackageController::class,"show"])->name('show');
+    });
 });
 

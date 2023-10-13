@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 
 class ProductPackageController extends Controller
 {
+    public function __construct(){
+        // echo "Testng";
+    }
+    
+
     public function index(Request $request){
         $search = $request['search'] ?? "";
         if($search != ""){
@@ -31,58 +36,44 @@ class ProductPackageController extends Controller
             return view('productspackage.create')->with($data);        
     }
 
-    public function show($id)
+    public function show(Request $request)
     {
-        $package = ProductPackage::findOrFail($id);
+        $package = $request->package;
+        $id = $request->package->id;
         $productsRelation = product_relationship::where('product_package_id', '=', $id)->get();
 
         foreach ($productsRelation as $item) {
            $productPackageIds[] = $item['product_id'];
         }
-
-        // dd($productPackageIds);
         $products = Product::whereIn('id', $productPackageIds)->get();
-        // dd($products);
-
         $data = compact("package","products");
-
-        // dd($package);
         return view('productspackage.show')->with($data);
     }
 
     public function store(Create $request)
     {
-        // dd($request->input('product_list'));
-
         $product_list = $request->input('product_list');
-
         //handle add product to database
         $Package = ProductPackage::create([
             'package_name'=> $request->input('package_name'),
             'package_description'=> $request->input('package_description'),
         ]);
         $PackageId = $Package->id;
-        // dd($PackageId);
-
         foreach ($product_list as $product) {
             product_relationship::create([
                 'product_id'=> $product ,
                 'product_package_id'=> $PackageId,
             ]);
          }
-
-        // dd($Package);
-
         return redirect()
         ->route('packages.index')
         ->with('success', 'Product Package added successfully');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        // dd($id);
-        $Package = ProductPackage::findOrFail($id);
-        $Package->delete();
+        $id = $request->package->id;
+        $request->package->delete();
 
         product_relationship::where("product_package_id", $id)->delete();
         return redirect()
@@ -90,10 +81,13 @@ class ProductPackageController extends Controller
         ->with('success', 'Product Package deleted successfully');
     }
 
-    public function edit($id)
+    public function edit(Request $request)
     { 
+
         //lấy thông tin gói sản phẩm
-        $package = ProductPackage::findOrFail($id);
+        $package = $request->package;
+
+        $id = $request->package->id;
 
         //lấy thông tin các sản phẩm
         $products = Product::orderBy('created_at', 'DESC')->get();
@@ -106,14 +100,15 @@ class ProductPackageController extends Controller
             $productIds[] = $product_id['product_id'];
         }
 
-        // dd($productIds);
-
         $data = compact("package","productIds","products");
 
         return view('productspackage.edit')->with($data);
     }
 
-    public function update(Update $request, $id){
+    public function update(Update $request){
+        $package = $request->package;
+        $id = $request->package->id;
+
         // $package = ProductPackage::findOrFail($id);
         $productsRelation = product_relationship::where('product_package_id', '=', $id)->get();
 
