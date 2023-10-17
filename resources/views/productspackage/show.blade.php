@@ -6,12 +6,12 @@
         <hr>
         <div class="mb-3">
             <label for="exampleInputTitle" class="form-label">Tên gói sản phẩm</label>
-            <input type="text" name="title" class="form-control" value="{{ $package->package_name }}"
+            <input type="text" name="title" class="form-control" value="{{ $package->name }}"
                 placeholder="Enter your title">
         </div>
         <div class="mb-3">
             <label for="exampleInputPrice" class="form-label">Mô tả gói sản phẩm</label>
-            <input type="text" name="price" class="form-control" value="{{ $package->package_description }}"
+            <input type="text" name="price" class="form-control" value="{{ $package->description }}"
                 placeholder="Enter your price">
         </div>
         <h2>Danh sách sản phẩm trong gói</h2>

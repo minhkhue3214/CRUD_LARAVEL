@@ -20,7 +20,11 @@ class ProductService
         return $this->productRepo->index($search);
     }
 
-    public function create(Request $request) {
+    public function getListProduct(){
+        return $this->productRepo->getListProduct();
+    }
+
+    public function Store(Request $request) {
         $payload = [
             'title'=> $request->input('title'),
             'price'=> $request->input('price'),
@@ -28,7 +32,7 @@ class ProductService
             'description'=> $request->input('description'),
         ];
 
-        return $this->productRepo->create($payload);
+        return $this->productRepo->store($payload);
     }
 
     public function update(Request $request) {
@@ -41,12 +45,20 @@ class ProductService
             'description'=> $request->input('description'),
         ];
 
-        return $this->productRepo->edit($payload);
+        return $this->productRepo->update($payload);
     }
 
     public function delete(Request $request){
         // dd($request->product->id);
-
         return $this->productRepo->delete($request->product->id);
+    }
+
+    public function productInPackage($productsRelation){
+        // dd($productsRelation);
+        foreach ($productsRelation as $item) {
+           $productPackageIds[] = $item['product_id'];
+        }
+        // dd($request->product->id);
+        return $this->productRepo->productInPackage($productPackageIds);
     }
 }

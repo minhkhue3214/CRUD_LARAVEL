@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProductPackageController;
+use App\Http\Controllers\PackageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +22,7 @@ Route::post('post-login',[AuthController::class,"postLogin"])->name('login.post'
 Route::get('logout',[AuthController::class,"logout"])->name('logout');
 
 
-Route::put('edit-package/{id}',[ProductPackageController::class,"update"])->name('package.update');
+Route::put('edit-package/{id}',[PackageController::class,"update"])->name('package.update');
 
 Route::prefix('products')->name('products.')->middleware(['auth'])->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
@@ -39,15 +39,15 @@ Route::prefix('products')->name('products.')->middleware(['auth'])->group(functi
 });
 
 Route::prefix('packages')->name('packages.')->middleware(['auth'])->group(function () {
-    Route::get('/', [ProductPackageController::class, 'index'])->name('index');
-    Route::get('/create',[ProductPackageController::class,"create"])->name('create');
-    Route::post('/store',[ProductPackageController::class,"store"])->name('store');
+    Route::get('/', [PackageController::class, 'index'])->name('index');
+    Route::get('/create',[PackageController::class,"create"])->name('create');
+    Route::post('/store',[PackageController::class,"store"])->name('store');
 
     Route::middleware(['package'])->group(function () {
-        Route::get('/{packagesId}/edit',[ProductPackageController::class,"edit"])->name('edit');
-        Route::put('/{packagesId}/update',[ProductPackageController::class,"update"])->name('update');
-        Route::delete('/{packagesId}/destroy',[ProductPackageController::class,"destroy"])->name('destroy');
-        Route::get('/{packagesId}/show',[ProductPackageController::class,"show"])->name('show');
+        Route::get('/{packagesId}/edit',[PackageController::class,"edit"])->name('edit');
+        Route::put('/{packagesId}/update',[PackageController::class,"update"])->name('update');
+        Route::delete('/{packagesId}/destroy',[PackageController::class,"destroy"])->name('destroy');
+        Route::get('/{packagesId}/show',[PackageController::class,"show"])->name('show');
     });
 });
 

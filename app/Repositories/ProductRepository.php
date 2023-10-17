@@ -21,7 +21,11 @@ class ProductRepository
         }
     }
 
-    public function create($payload) {
+    public function getListProduct(){
+       return $this->model->orderBy('created_at', 'DESC')->get();
+    }
+
+    public function store($payload) {
         return $this->model->create([
             'title'=> $payload['title'],
             'price'=> $payload['price'],
@@ -30,7 +34,7 @@ class ProductRepository
         ]);
     }
 
-    public function edit($payload) {
+    public function update($payload) {
         // dd($this->model->find($payload['id']));
         return $this->model->find($payload['id'])->update([
             'title'=> $payload['title'],
@@ -41,7 +45,19 @@ class ProductRepository
     }
 
     public function delete($payload){
+
+        $product = $this->model->find($payload);
+
+        if($product){
+            $product->package()->detach();
+
+            $product->delete();
+        }
+
+    }
+
+    public function productInPackage($payload){
         // dd($payload);
-        return $this->model->find($payload)->delete();
+        return $this->model->whereIn('id', $payload)->get();
     }
 }

@@ -9,4 +9,8 @@ class Product extends Model
 {
     use HasFactory;
     protected $fillable = ['title','price','product_code','description'];
+
+    public function package(){ 
+        return $this->belongsToMany(Package::class,"product_packages");
+    }
 }

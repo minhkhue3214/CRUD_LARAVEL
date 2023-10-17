@@ -7,15 +7,18 @@ use App\Http\Requests\Product\Update;
 use App\Models\Product;
 use App\Models\product_relationship;
 use App\Services\ProductService;
+use App\Services\ProductRelationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
     protected ProductService $productService;
+    protected ProductRelationService $productRelationService;
 
-    public function __construct(ProductService $productService) {
+    public function __construct(ProductService $productService,ProductRelationService $productRelationService) {
         $this->productService = $productService;
+        $this->productRelationService = $productRelationService;
     }
 
     /**
@@ -24,14 +27,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request['search'] ?? "";
-        // if($search != ""){
-        //     $products = Product::where("title","LIKE","%$search%")->orWhere("product_code","LIKE","%$search%")->orderBy('created_at', 'DESC')->paginate(5);
-        // }else{
-        //     $products = Product::orderBy('created_at', 'DESC')->paginate(5); 
-        // }
-        
         $products = $this->productService->index($request);
-
         $data = compact("products","search");
         return view('dashboard')->with($data);
     }
@@ -45,6 +41,7 @@ class ProductController extends Controller
     }
 
     public function show(Request $request){
+
         $product = $request->product;
         return view('products.show',compact("product"));
     }
@@ -52,10 +49,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Create $request)
+    public function store(create $request)
     {
-        $products = $this->productService->create($request);
-
+       
+        $products = $this->productService->store($request);
         return redirect()
             ->route('products.index')
             ->with('success', 'Product added successfully');
@@ -75,19 +72,6 @@ class ProductController extends Controller
      */
     public function update(Update $request)
     {
-        // $products = $this->productService->update($request);
-        // $product = $request->product;
-        
-        // dd($product);
-        // $product->update([
-        //     'title'=> $request->input('title'),
-        //     'price'=> $request->input('price'),
-        //     'product_code'=> $request->input('product_code'),
-        //     'description'=> $request->input('description'),
-        // ]);
-
-        // dd($request->product->id);
-        // dd($productUpdated);
         $productUpdated = $this->productService->update($request);
         return redirect()->route('products.index')->with('success', "Product updated successfully");  
     }
@@ -97,12 +81,9 @@ class ProductController extends Controller
      */
     public function destroy(Request $request)
     {
-        // dd($request->product->id);
-        // $product = $request->product;
-        // $product->delete();
-        product_relationship::where('product_id', $request->product->id)->delete();
 
         $this->productService->delete($request);
+        // $this->productRelationService->delete($request);
         return redirect()->route('products.index')->with('success',"product deleted successfully");
     }
 }

@@ -42,7 +42,7 @@
             <div class="mb-3">
                 <label for="exampleInputTitle" class="form-label">Product Package Name</label>
                 <input type="text" name="package_name" class="form-control" placeholder="Enter your title"
-                    value="{{ $package->package_name }}">
+                    value="{{ $package->name }}">
                 @error('package_name')
                     <span style="color:red">{{ $message }}</span>
                 @enderror
@@ -51,7 +51,7 @@
                 <label for="exampleInputPrice" class="form-label">Description</label>
                 {{-- <input type="text" name="description" class="form-control" placeholder="Enter your description"> --}}
                 <textarea type="text" name="package_description" class="form-control" rows="5" id="comment"
-                    placeholder="Enter your description">{{ $package->package_description }}</textarea>
+                    placeholder="Enter your description">{{ $package->description }}</textarea>
                 @error('package_description')
                     <span style="color:red">{{ $message }}</span>
                 @enderror

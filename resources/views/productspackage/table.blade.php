@@ -44,10 +44,9 @@
                     @foreach ($packages as $pr)
                         <tr>
                             <td>{{ $pr->id }}</td>
-                            <td>{{ $pr->package_name }}</td>
+                            <td>{{ $pr->name }}</td>
                             <td>testing</td>
-                            <td>{{ $pr->package_description }}</td>
-                            <td>{{ $pr->title }}</td>
+                            <td>{{ $pr->description }}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     {{-- <button type="button" class="btn btn-danger m-0" data-toggle="modal"
