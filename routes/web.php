@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PackageController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[AuthController::class,"index"]);
 Route::get('login',[AuthController::class,"index"])->name('login');
+Route::get('register',[AuthController::class,"register"])->name('register');
+Route::post('post-register',[AuthController::class,"postRegister"])->name('register.post');
 Route::post('post-login',[AuthController::class,"postLogin"])->name('login.post');
 Route::get('logout',[AuthController::class,"logout"])->name('logout');
 
@@ -49,5 +53,27 @@ Route::prefix('packages')->name('packages.')->middleware(['auth'])->group(functi
         Route::delete('/{packagesId}/destroy',[PackageController::class,"destroy"])->name('destroy');
         Route::get('/{packagesId}/show',[PackageController::class,"show"])->name('show');
     });
+});
+
+Route::prefix('users')->name('users.')->middleware(['auth'])->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('index');
+
+    Route::middleware(['user'])->group(function () {
+        Route::get('/{usersId}/edit',[UserController::class,"edit"])->name('edit');
+        Route::put('/{usersId}/update',[UserController::class,"update"])->name('update');
+    });
+
+});
+
+Route::prefix('home')->name('home.')->group(function () {
+    Route::get('/', [OrderController::class, 'index'])->name('index');
+    Route::get('/orders', [OrderController::class, 'orders'])->name('orders');
+    Route::middleware(['order'])->delete('/{orderId}/destroy', [OrderController::class, 'destroy'])->name('destroy');
+    Route::middleware(['order'])->get('/{orderId}/show', [OrderController::class, 'show'])->name('show');
+    Route::middleware(['product'])->get('/{productId}/insertproduct', [OrderController::class, 'insertProductToCart'])->name('insertproduct');
+    Route::middleware(['product'])->get('/{productId}/deleteproduct', [OrderController::class, 'removeProductFromCart'])->name('deleteproduct');
+    Route::middleware(['package'])->get('/{packagesId}/insertpackage', [OrderController::class, 'insertPackageToCart'])->name('insertpackage');
+    Route::middleware(['package'])->get('/{packagesId}/deletepackage', [OrderController::class, 'removePackageFromCart'])->name('deletepackage');
+    Route::post('/payment', [OrderController::class, 'payment'])->name('payment');
 });
 

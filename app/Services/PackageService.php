@@ -19,10 +19,18 @@ class PackageService
         return $this->packageRepo->index($search);
     }
 
+    public function getListPackage(){
+        return $this->packageRepo->getListPackage();
+    }
+
     public function show(Request $request){
         // dd($request->package->id);
 
        return $this->packageRepo->show($request->package->id);
+    }
+
+    public function caculatePrice(Request $request){
+        return $this->packageRepo->caculatePrice($request->package->id);
     }
 
     public function store(Request $request) {
@@ -36,9 +44,6 @@ class PackageService
         return $this->packageRepo->store($payload);
     }
 
-    public function edit(Request $request){
-        dd($request);
-    }
 
     public function update(Request $request) {
         $payload = [

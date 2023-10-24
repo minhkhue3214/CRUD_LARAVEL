@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PackageProduct\Create;
 use App\Http\Requests\PackageProduct\Update;
-use App\Models\Product;
-use App\Models\product_relationship;
-use App\Models\Package;
 use App\Services\PackageService;
-use App\Services\ProductRelationService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 
@@ -16,12 +12,10 @@ class PackageController extends Controller
 {
     protected packageService $packageService;
     protected ProductService $productService;
-    protected ProductRelationService $productRelationService;
 
-    public function __construct(ProductService $productService,PackageService $packageService,ProductRelationService $productRelationService) {
+    public function __construct(ProductService $productService,PackageService $packageService) {
         $this->packageService = $packageService;
         $this->productService = $productService;
-        $this->productRelationService = $productRelationService;
     }
     
 
@@ -53,19 +47,14 @@ class PackageController extends Controller
     public function show(Request $request)
     {
         $package = $request->package;
-        // $productsRelation = $this->productRelationService->productsRelation($request);
-        // $products = $this->productService->productInPackage($productsRelation);
         $products = $this->packageService->show($request);
-        // dd($products['product']);
 
         $data = compact("package","products");
         return view('productspackage.show')->with($data);
     }
 
     public function destroy(Request $request)
-    {
-        // dd("testing");
-        
+    {        
         $this->packageService->delete($request);
         return redirect()
         ->route('packages.index')
@@ -81,8 +70,7 @@ class PackageController extends Controller
             $selectedProducts = $this->packageService->show($request);
             $productIds = collect($selectedProducts)->pluck('id')->toArray();
     
-            $data = compact("package","productIds","products");
-            return view('productspackage.edit')->with($data);
+            return view('productspackage.edit', compact("package","productIds","products"));
     }
 
     public function update(Update $request){

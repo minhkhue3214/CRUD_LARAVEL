@@ -18,6 +18,7 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="{{ route('products.index') }}">PRODUCT MANAGEMENT</a>
                 <a class="navbar-brand" href="{{ route('packages.index') }}">PACKAGING MANAGEMENT</a>
+                <a class="navbar-brand" href="{{ route('home.orders') }}">ORDER MANAGEMENT</a>
             </div>
 
             <ul class="nav navbar-nav navbar-right">

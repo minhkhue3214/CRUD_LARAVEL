@@ -51,7 +51,7 @@ class ProductRepository
         if($product){
             $product->package()->detach();
 
-            $product->delete();
+            return $product->delete();
         }
 
     }

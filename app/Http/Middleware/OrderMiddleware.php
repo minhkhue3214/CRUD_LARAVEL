@@ -2,12 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Order;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Product;
 
-class ProductMiddleware
+class OrderMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,12 +16,12 @@ class ProductMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $id = $request->productId;
+        $id = $request->orderId;
         // dd($id);
-        $product = Product::findOrFail($id);
+        $order = Order::findOrFail($id);
         // dd($product);
 
-        $request->merge(['product' => $product]);
+        $request->merge(['order' => $order]);
 
         return $next($request);
     }

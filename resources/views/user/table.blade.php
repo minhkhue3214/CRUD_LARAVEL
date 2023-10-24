@@ -32,30 +32,26 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>ID gói sản phẩm</th>
-                    <th>Tên gói sản phẩm</th>
-                    <th>Giá gói sản phẩm</th>
-                    <th>Mô tả gói sản phẩm</th>
+                    <th>ID người dùng</th>
+                    <th>Tên người dùng</th>
+                    <th>Role</th>
+                    <th>Email</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
-                @if ($packages->count() > 0)
-                    @foreach ($packages as $pr)
+                @if ($users->count() > 0)
+                    @foreach ($users as $us)
                         <tr>
-                            <td>{{ $pr->id }}</td>
-                            <td>{{ $pr->name }}</td>
-                            <td>testing</td>
-                            <td>{{ $pr->description }}</td>
+                            <td>{{ $us->id }}</td>
+                            <td>{{ $us->name }}</td>
+                            <td>{{ $us->role }}</td>
+                            <td>{{ $us->email }}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    {{-- <button type="button" class="btn btn-danger m-0" data-toggle="modal"
-                                        data-target="#myModal">Delete</button> --}}
                                     <div class="modal-footer">
-                                        <form action="{{ route('packages.destroy', $pr->id) }}" method="POST">
-                                            <a type="button" href="{{ route('packages.show', $pr->id) }}"
-                                                class="btn btn-primary">Detail</a>
-                                            <a type="button" href="{{ route('packages.edit', $pr->id) }}"
+                                        <form action="{{ route('packages.destroy', $us->id) }}" method="POST">
+                                            <a type="button" href="{{ route('users.edit', $us->id) }}"
                                                 class="btn btn-success">Edit</a>
                                             @csrf
                                             @method('DELETE')
@@ -65,7 +61,6 @@
                                 </div>
                             </td>
                         </tr>
-
                     @endforeach
                 @else
                     <tr>
@@ -77,7 +72,7 @@
 
         {{-- Pagination --}}
         <div class="row">
-            {{ $packages->links() }}
+            {{ $users->links() }}
         </div>
     </div>
 @endsection
@@ -93,3 +88,6 @@
         min-width: 200px;
     }
 </style>
+
+
+

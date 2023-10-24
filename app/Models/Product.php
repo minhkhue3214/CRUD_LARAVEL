@@ -11,6 +11,6 @@ class Product extends Model
     protected $fillable = ['title','price','product_code','description'];
 
     public function package(){ 
-        return $this->belongsToMany(Package::class,"product_packages");
+        return $this->belongsToMany(Package::class,"product_packages")->withTimestamps();
     }
 }
