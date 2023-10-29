@@ -17,7 +17,7 @@
                 @foreach ($orders as $order)
                     <tbody>
                         <tr>
-                            <th scope="row">1</th>
+                            <th scope="row">{{ $order->id }}</th>
                             <td>{{ $order->user_id }}</td>
                             <td>{{ $order->user_name }}</td>
                             <td>{{ $order->price }}</td>
@@ -26,8 +26,8 @@
                                     {{-- <button type="button" class="btn btn-danger m-0" data-toggle="modal"
                                         data-target="#myModal">Delete</button> --}}
                                     <div class="modal-footer">
-                                        <form action="{{ route('home.destroy', $order->id) }}" method="POST">
-                                            <a type="button" href="{{ route('home.show', $order->id) }}"
+                                        <form action="{{ route('orders.destroy', $order->id) }}" method="POST">
+                                            <a type="button" href="{{ route('orders.show', $order->id) }}"
                                                 class="btn btn-primary">Detail</a>
                                             @csrf
                                             @method('DELETE')

@@ -10,7 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     {{-- <script src="../../views/home/home.js"></script> --}}
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Trang chủ</title>
 </head>
@@ -106,41 +105,104 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-
                 <form action="{{ route('home.payment') }}" method="POST" class="ms-auto me-auto mt-3"
                     enctype="multipart/form-data">
                     @csrf
-                    <h1>Sản phẩm</h1>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Tên sản phẩm</th>
-                                <th scope="col">Giá sản phẩm</th>
-                                <th scope="col">Số lượng</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody-product">
-                            <!-- Dữ liệu sản phẩm từ localStorage sẽ được hiển thị ở đây -->
-                        </tbody>
-                    </table>
 
-                    <h1>Gói sản phẩm</h1>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Tên gói sản phẩm</th>
-                                <th scope="col">Số lượng</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody-package">
-                            <!-- Dữ liệu gói sản phẩm từ localStorage sẽ được hiển thị ở đây -->
-                        </tbody>
-                    </table>
+                    <div class="modal-body">
+                        <h1>Sản phẩm</h1>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Tên sản phẩm</th>
+                                    <th scope="col">Giá sản phẩm</th>
+                                    <th scope="col">Số lượng</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-product">
 
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- <div class="modal-body">
+                        @if ((isset($productcart) && count($productcart) > 0) || (isset($packagecart) && count($packagecart) > 0))
+                            @if (isset($productcart) && count($productcart) > 0)
+                                <h1>Sản phẩm</h1>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Tên sản phẩm</th>
+                                            <th scope="col">Giá sản phẩm</th>
+                                            <th scope="col">Số lượng</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($productcart as $product)
+                                            <tr>
+                                                <th scope="row">{{ $product->id }}</th>
+                                                <td>{{ $product->title }}</td>
+                                                <td>{{ $product->price }}</td>
+                                                <input type="hidden" value="{{ $product->price }}" name="price[]">
+                                                <td>
+                                                    <input name="quantity_product[]" type="number" class="form-control"
+                                                        value={{ $product->quantity }} placeholder="quantity"
+                                                        aria-describedby="basic-addon1"
+                                                        style="width: 120px; height: 30px;">
+                                                </td>
+                                                <td> <a type="button"
+                                                        href="{{ route('home.deleteproduct', $product->id) }}"
+                                                        class="btn btn-danger">Delete</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                            @endif
+
+                            @if (isset($packagecart) && count($packagecart) > 0)
+                                <h1>Gói sản phẩm</h1>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Tên gói sản phẩm</th>
+                                            <th scope="col">Giá gói sản phẩm</th>
+                                            <th scope="col">Số lượng</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($packagecart as $package)
+                                            <tr>
+                                                <th scope="row">{{ $package->id }}</th>
+                                                <td>{{ $package->name }}</td>
+                                                <td>{{ $package->price }}</td>
+                                                <input type="hidden" value="{{ $package->price }}" name="price[]">
+                                                <td> <input name="quantity_package[]" type="number"
+                                                        class="form-control" value={{ $package->quantity }}
+                                                        placeholder="quantity" aria-describedby="basic-addon1"
+                                                        style="width: 120px; height: 30px;">
+                                                </td>
+                                                <td> <a type="button" class="btn btn-danger">Delete</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                            @endif
+                            <button type="submit" class="btn btn-primary">Thanh toán</button>
+                        @else
+                            <h3>Không có sản phẩm nào trong giỏ hàng</h3>
+                        @endif
+
+                    </div> --}}
                 </form>
 
                 <div class="modal-footer">
@@ -176,36 +238,16 @@
                     return product.id === targetID;
                 });
 
-                localStorage.setItem('productList', JSON.stringify(productList));
-
                 if (isIDExists) {
                     alert("sản phẩm đã tồn tại trong giỏ hàng")
                 } else {
                     const tbody = document.querySelector('.tbody-product');
-                    tbody.innerHTML = '';
 
                     product.quantity = 1;
+                    console.log("testing product", JSON.stringify(product));
                     productList.push(product);
+
                     localStorage.setItem('productList', JSON.stringify(productList));
-
-                    productList.forEach(function(product, index) {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
-                <td>${product.title}</td>
-                <td>${product.price}</td>
-                <td>
-                    <input name="quantity_product[]" type="number" class="form-control"
-                        value="${product.quantity}" placeholder="quantity"
-                        aria-describedby="basic-addon1" style="width: 120px; height: 30px;">
-                </td>
-                <td>
-                    <a type="button" href="${product.id}" class="btn btn-danger delete-product">Delete</a>
-                </td>
-                `;
-                        tbody.appendChild(tr);
-                    });
-
                 }
 
             }
@@ -229,29 +271,23 @@
                 if (isIDExists) {
                     alert("gói sản phẩm đã tồn tại trong giỏ hàng")
                 } else {
-                    const tbody = document.querySelector('.tbody-package');
-                    tbody.innerHTML = '';
-
                     package.quantity = 1;
+                    console.log("testing package", JSON.stringify(package));
                     packageList.push(package);
                     localStorage.setItem('packageList', JSON.stringify(packageList));
 
-                    packageList.forEach(function(package, index) {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
-                <td>${package.name}</td>
-                <td>
-                    <input name="quantity_product[]" type="number" class="form-control"
-                        value="${package.quantity}" placeholder="quantity"
-                        aria-describedby="basic-addon1" style="width: 120px; height: 30px;">
-                </td>
-                <td>
-                    <a type="button" href="${package.id}" class="btn btn-danger delete-product">Delete</a>
-                </td>
-                `;
-                        tbody.appendChild(tr);
-                    });
+                    // Lấy dữ liệu từ LocalStorage
+                    var dataFromLocalStorage = localStorage.getItem(
+                        'packageList'); // Thay 'keyName' bằng tên key của bạn
+
+                    // Sử dụng AJAX để gửi dữ liệu đến máy chủ PHP
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'url_của_php_script.php', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                    console.log("dataFromLocalStorage", dataFromLocalStorage);
+                    // Gửi dữ liệu như một tham số POST
+                    xhr.send('data=' + dataFromLocalStorage);
                 }
 
             }
@@ -271,6 +307,15 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
 
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous">
+    </script>
+    -->
 </body>
 
 </html>

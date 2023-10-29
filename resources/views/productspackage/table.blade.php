@@ -36,6 +36,7 @@
                     <th>Tên gói sản phẩm</th>
                     <th>Giá gói sản phẩm</th>
                     <th>Mô tả gói sản phẩm</th>
+                    <th>Hình ảnh</th>
                     <th>Thao tác</th>
                 </tr>
             </thead>
@@ -47,6 +48,9 @@
                             <td>{{ $pr->name }}</td>
                             <td>testing</td>
                             <td>{{ $pr->description }}</td>
+                            <td>
+                                <img src="{{$pr->image}}" width="60" height="60" alt="">
+                            </td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     {{-- <button type="button" class="btn btn-danger m-0" data-toggle="modal"

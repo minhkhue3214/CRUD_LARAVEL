@@ -22,13 +22,21 @@ Route::get('/',[AuthController::class,"index"]);
 Route::get('login',[AuthController::class,"index"])->name('login');
 Route::get('register',[AuthController::class,"register"])->name('register');
 Route::post('post-register',[AuthController::class,"postRegister"])->name('register.post');
-Route::post('post-login',[AuthController::class,"postLogin"])->name('login.post');
-Route::get('logout',[AuthController::class,"logout"])->name('logout');
+
+Route::get('admin-login',[AuthController::class,"Adminlogin"])->name('admin.login');
+Route::post('admin-login',[AuthController::class,"Adminlogin"])->name('admin.dashboard');
+
+Route::get('user-login',[AuthController::class,"Userlogin"])->name('user.login');
+Route::post('user-login',[AuthController::class,"Userlogin"])->name('user.home');
 
 
-Route::put('edit-package/{id}',[PackageController::class,"update"])->name('package.update');
+Route::get('admin-logout',[AuthController::class,"Adminlogout"])->name('admin.logout');
+Route::get('user-logout',[AuthController::class,"Userlogout"])->name('user.logout');
 
-Route::prefix('products')->name('products.')->middleware(['auth'])->group(function () {
+
+// Route::put('edit-package/{id}',[PackageController::class,"update"])->name('package.update');
+
+Route::prefix('products')->name('products.')->middleware(['auth:admin'])->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::get('/create', [ProductController::class, 'create'])->name('create');
     Route::post('/store', [ProductController::class, 'store'])->name('store');
@@ -42,7 +50,7 @@ Route::prefix('products')->name('products.')->middleware(['auth'])->group(functi
     
 });
 
-Route::prefix('packages')->name('packages.')->middleware(['auth'])->group(function () {
+Route::prefix('packages')->name('packages.')->middleware(['auth:admin'])->group(function () {
     Route::get('/', [PackageController::class, 'index'])->name('index');
     Route::get('/create',[PackageController::class,"create"])->name('create');
     Route::post('/store',[PackageController::class,"store"])->name('store');
@@ -55,25 +63,27 @@ Route::prefix('packages')->name('packages.')->middleware(['auth'])->group(functi
     });
 });
 
-Route::prefix('users')->name('users.')->middleware(['auth'])->group(function () {
+Route::prefix('users')->name('users.')->middleware(['auth:admin'])->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('index');
 
     Route::middleware(['user'])->group(function () {
         Route::get('/{usersId}/edit',[UserController::class,"edit"])->name('edit');
         Route::put('/{usersId}/update',[UserController::class,"update"])->name('update');
     });
+});
 
+Route::prefix('orders')->name('orders.')->middleware(['auth:admin'])->group(function () {
+    Route::get('/', [OrderController::class, 'orders'])->name('index');
+    Route::middleware(['order'])->delete('/{orderId}/destroy', [OrderController::class, 'destroy'])->name('destroy');
+    Route::middleware(['order'])->get('/{orderId}/show', [OrderController::class, 'show'])->name('show');
 });
 
 Route::prefix('home')->name('home.')->group(function () {
     Route::get('/', [OrderController::class, 'index'])->name('index');
-    Route::get('/orders', [OrderController::class, 'orders'])->name('orders');
-    Route::middleware(['order'])->delete('/{orderId}/destroy', [OrderController::class, 'destroy'])->name('destroy');
-    Route::middleware(['order'])->get('/{orderId}/show', [OrderController::class, 'show'])->name('show');
-    Route::middleware(['product'])->get('/{productId}/insertproduct', [OrderController::class, 'insertProductToCart'])->name('insertproduct');
-    Route::middleware(['product'])->get('/{productId}/deleteproduct', [OrderController::class, 'removeProductFromCart'])->name('deleteproduct');
-    Route::middleware(['package'])->get('/{packagesId}/insertpackage', [OrderController::class, 'insertPackageToCart'])->name('insertpackage');
-    Route::middleware(['package'])->get('/{packagesId}/deletepackage', [OrderController::class, 'removePackageFromCart'])->name('deletepackage');
+    Route::middleware(["auth",'product'])->get('/{productId}/insertproduct', [OrderController::class, 'insertProductToCart'])->name('insertproduct');
+    Route::middleware(["auth",'package'])->get('/{packagesId}/insertpackage', [OrderController::class, 'insertPackageToCart'])->name('insertpackage');
+    Route::middleware(["auth",'product'])->get('/{productId}/deleteproduct', [OrderController::class, 'removeProductFromCart'])->name('deleteproduct');
+    Route::middleware(["auth",'package'])->get('/{packagesId}/deletepackage', [OrderController::class, 'removePackageFromCart'])->name('deletepackage');
     Route::post('/payment', [OrderController::class, 'payment'])->name('payment');
 });
 

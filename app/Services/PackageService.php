@@ -34,10 +34,22 @@ class PackageService
     }
 
     public function store(Request $request) {
-        // dd($request);
+
+        if($request->has('image')){
+            $file = $request->image;
+            $extension = $request->image->extension();
+            // $file_name = $file->getClientoriginalName();
+            $file_name = time().'-'.'package.'. $extension;
+            // dd($file_name);
+            $file->move(public_path('uploads'),$file_name); 
+            $request->merge(['image'=>'/uploads/'.$file_name]);
+            // dd($extension);
+        }
+
         $payload = [
             "product_list"=>$request->input("product_list"),
             'package_name'=> $request->input('package_name'),
+            'image'=> $request->input('image'),
             'package_description'=> $request->input('package_description'),
         ];
 
@@ -46,12 +58,31 @@ class PackageService
 
 
     public function update(Request $request) {
-        $payload = [
-            "id"=>$request->package->id,
-            'name'=> $request->input('package_name'),
-            'description'=> $request->input('package_description'),
-            'product_list'=> $request->input('product_list'),
-        ];
+        if($request->has('image')){
+            $file = $request->image;
+            $extension = $request->image->extension();
+            // $file_name = $file->getClientoriginalName();
+            $file_name = time().'-'.'product.'. $extension;
+            // dd($file_name);
+            $file->move(public_path('uploads'),$file_name); 
+            $request->merge(['image'=>'/uploads/'.$file_name]);
+
+            $payload = [
+                "id"=>$request->package->id,
+                'name'=> $request->input('package_name'),
+                'description'=> $request->input('package_description'),
+                'image'=> $request->input('image'),
+                'product_list'=> $request->input('product_list'),
+            ];
+        }else{
+            $payload = [
+                "id"=>$request->package->id,
+                'name'=> $request->input('package_name'),
+                'description'=> $request->input('package_description'),
+                'image'=> $request->package->image,
+                'product_list'=> $request->input('product_list'),
+            ];
+        }
 
         return $this->packageRepo->update($payload);
     }

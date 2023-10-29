@@ -19,6 +19,7 @@ class ProductController extends Controller
     {
         $search = $request['search'] ?? "";
         $products = $this->productService->index($request);
+        // dd($products);
         $data = compact("products","search");
         return view('dashboard')->with($data);
     }
@@ -50,6 +51,7 @@ class ProductController extends Controller
 
     public function update(Update $request)
     {
+        // dd($request->all());
         $this->productService->update($request);
         return redirect()->route('products.index')->with('success', $request->product->title." updated successfully");  
     }

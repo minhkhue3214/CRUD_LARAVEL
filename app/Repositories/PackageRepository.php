@@ -54,6 +54,7 @@ class PackageRepository
     {
         $package = $this->model->create([
             'name'=> $payload['package_name'],
+            'image'=> $payload['image'],
             'description'=> $payload['package_description'],
         ]);
         // dd($package->product());
@@ -70,6 +71,7 @@ class PackageRepository
 
         return $this->model->where('id', $payload['id'])->update([
                 'name'=> $payload['name'],
+                'image'=> $payload['image'],
                 'description'=> $payload['description'],
         ]);
     }

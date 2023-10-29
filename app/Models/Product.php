@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['title','price','product_code','description'];
+    protected $fillable = ['title','price',"image",'product_code','description'];
 
     public function package(){ 
         return $this->belongsToMany(Package::class,"product_packages")->withTimestamps();

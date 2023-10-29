@@ -28,7 +28,7 @@
                     </script>
 
 
-                    <form method="POST" action="{{ route('login.post') }}">
+                    <form method="POST" action="{{ route('user.home') }}">
                         @csrf
                         <div class="form-group row">
                             <label class="col-md-4">Email</label>

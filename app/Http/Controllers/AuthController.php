@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Requests\Auth\Register;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -28,38 +28,74 @@ class AuthController extends Controller
 
     //
     public function index(){
-        return view("auth.login");
+        return view("auth.UserLogin");
     }
 
-    public function postLogin(Request $request){
-        $request->validate([
-            "email" =>"required|email",
-            "password" =>"required",  
-        ]);
+    // public function postLogin(Request $request){
+    //     $request->validate([
+    //         "email" =>"required|email",
+    //         "password" =>"required",  
+    //     ]);
 
-        $checkLoginCredentials = $request->only('email','password');
+    //     $checkLoginCredentials = $request->only('email','password');
         
-        if(Auth::attempt($checkLoginCredentials)){
-            $user = $this->userService->findUserByEmail($request);
-            Session::put('user', $user);
-            // session_start();
-            $productcart = [];
-            $packagecart = [];
-            Session::put('productcart', $productcart);
-            Session::put('packagecart', $packagecart);
+    //     if(Auth::attempt($checkLoginCredentials)){
+    //         // $user = $this->userService->findUserByEmail($request);
+    //         // Session::put('user', $user);
 
-            if($user->role == 'admin'){
-                $products = $this->productService->getListProduct();
-                $packages = $this->packageService->getListPackage();
+    //         // $products = $this->productService->getListProduct();
+    //         // $packages = $this->packageService->getListPackage();
 
-                return view('home.home',compact("products","packages","productcart","packagecart")); 
-            }else{
-                return redirect('products')->withSuccess('You are successfully loggedin'); 
-            }
+    //         // $productcart = [];
+    //         // $packagecart = [];
+    //         // Session::put('productcart', $productcart);
+    //         // Session::put('packagecart', $packagecart);
 
+    //         // if($user->role == 'user'){
+
+    //         //     return view('home.home',compact("products","packages","productcart","packagecart")); 
+    //         // }else{
+    //         //     return redirect('products')->withSuccess('You are successfully loggedin'); 
+    //         // }
+
+    //         if (Auth::guard('admin')) {
+    //             dd('Testing admin');
+    //         }
+            
+    //         return redirect('products')->withSuccess('You are successfully loggedin'); 
+    //     }
+
+    //     // return redirect('login')->withErrors(['error' => 'Your email and password are not match']);
+    // }
+
+    public function Userlogin(Request $request)
+    {
+        if ($request->getMethod() == 'GET') {
+            return view('auth.Userlogin');
         }
+        $credentials = $request->only(['email', 'password']);
+        
+        if (Auth::attempt($credentials)) {
+            // dd("just sad");
+            return redirect()->route('home.index');
+        } else {
+            return redirect()->back()->withInput();
+        }
+    }
 
-        return redirect('login')->withErrors(['error' => 'Your email and password are not match']);
+    public function Adminlogin(Request $request)
+    {
+        if ($request->getMethod() == 'GET') {
+            return view('auth.Adminlogin');
+        }
+        
+        $credentials = $request->only(['email', 'password']);
+        if (Auth::guard('admin')->attempt($credentials)) {
+            return redirect()->route('products.index');
+        } else {
+            // dd("authen success");
+            return redirect()->back()->withInput();
+        }
     }
 
     public function register(){
@@ -79,7 +115,6 @@ class AuthController extends Controller
         }
 
         if(!empty($user)){
-
             return redirect('register')->withErrors(['error' => 'Registration failed , try again']);
         }else{
             $data["name"] = $request->name;
@@ -91,10 +126,15 @@ class AuthController extends Controller
         }
     }
     
-    public function logout(){
+    public function Userlogout(){
         Session::flush();
         Auth::logout();
-        return redirect("home");
+        return redirect("user-login");
+    }
+    public function Adminlogout(){
+        Session::flush();
+        Auth::logout();
+        return redirect("admin-login");
     }
 
     public function dashboard(){

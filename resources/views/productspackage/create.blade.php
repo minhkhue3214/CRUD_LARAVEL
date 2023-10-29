@@ -47,6 +47,14 @@
                 @enderror
             </div>
             <div class="mb-3">
+                <label for="exampleInputTitle" class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" placeholder="Enter your title"
+                    value={{ old('image') }}>
+                @error('image')
+                    <span style="color:red">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
                 <label for="exampleInputPrice" class="form-label">Description</label>
                 {{-- <input type="text" name="description" class="form-control" placeholder="Enter your description"> --}}
                 <textarea type="text" name="package_description" class="form-control" rows="5" id="comment"

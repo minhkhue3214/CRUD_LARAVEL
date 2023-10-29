@@ -50,13 +50,26 @@ class ProductService
 
     public function Store(Request $request) {
         try{
+            if($request->has('image')){
+                $file = $request->image;
+                $extension = $request->image->extension();
+                // $file_name = $file->getClientoriginalName();
+                $file_name = time().'-'.'product.'. $extension;
+                // dd($file_name);
+                $file->move(public_path('uploads'),$file_name); 
+                $request->merge(['image'=>'/uploads/'.$file_name]);
+                // dd($extension);
+            }
+            
             $payload = [
                 'title'=> $request->input('title'),
                 'price'=> $request->input('price'),
+                'image'=> $request->input('image'),
                 'product_code'=> $request->input('product_code'),
                 'description'=> $request->input('description'),
             ];
-    
+
+            // dd($payload);
             return $this->productRepo->store($payload);
         }catch(Exception $e){
             Log::error($e->getMessage());
@@ -65,14 +78,35 @@ class ProductService
     }
 
     public function update(Request $request) {
-        // dd($request);
-        $payload = [
-            "id"=>$request->product->id,
-            'title'=> $request->input('title'),
-            'price'=> $request->input('price'),
-            'product_code'=> $request->input('product_code'),
-            'description'=> $request->input('description'),
-        ];
+        // dd($request->product->image);
+
+        if($request->has('image')){
+            $file = $request->image;
+            $extension = $request->image->extension();
+            // $file_name = $file->getClientoriginalName();
+            $file_name = time().'-'.'product.'. $extension;
+            // dd($file_name);
+            $file->move(public_path('uploads'),$file_name); 
+            $request->merge(['image'=>'/uploads/'.$file_name]);
+            // dd($extension);
+            $payload = [
+                "id"=>$request->product->id,
+                'title'=> $request->input('title'),
+                'price'=> $request->input('price'),
+                'image'=> $request->input('image'),
+                'product_code'=> $request->input('product_code'),
+                'description'=> $request->input('description'),
+            ];
+        }else{
+            $payload = [
+                "id"=>$request->product->id,
+                'title'=> $request->input('title'),
+                'price'=> $request->input('price'),
+                'image'=> $request->product->image,
+                'product_code'=> $request->input('product_code'),
+                'description'=> $request->input('description'),
+            ];
+        }
 
         return $this->productRepo->update($payload);
     }

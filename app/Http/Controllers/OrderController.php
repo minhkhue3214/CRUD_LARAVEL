@@ -9,8 +9,6 @@ use App\Services\ProductService;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 
-
-
 class OrderController extends Controller
 {
 
@@ -28,8 +26,6 @@ class OrderController extends Controller
 
         $products = $this->productService->getListProduct();
         $packages = $this->packageService->getListPackage();
-        $cart = [];
-        Session::put('cart', $cart);
         return view('home.home',compact("products","packages"));
     }
 
@@ -41,141 +37,93 @@ class OrderController extends Controller
 
     public function insertProductToCart(Request $request){
         $product = $request->product;
-        // dd($product->id);
         $productcart = Session::get('productcart'); 
-        $packagecart = Session::get('packagecart'); 
-
-        $products = $this->productService->getListProduct();
-        $packages = $this->packageService->getListPackage();
-
-        $productIds = array_map(function ($product) {
-            return $product['id'];
-        }, $productcart);
-
-        if (in_array($product->id, $productIds)) {
-
-        return view('home.home',compact("products","packages","productcart","packagecart"));
-        } else {
-        $product->quantity = 1;
-        array_push($productcart, $product);
-        // dd($productcart);
-        Session::put('productcart', $productcart);
-
-        return view('home.home',compact("products","packages","productcart","packagecart"));
-        }
-    }
-
-    public function removeProductFromCart(Request $request){
-        // dd($request->product);
-        $id = $request->product->id;
-        $productcart = Session::get('productcart'); 
-        $packagecart = Session::get('packagecart');
-        
-        $products = $this->productService->getListProduct();
-        $packages = $this->packageService->getListPackage();
-
-        foreach ($productcart as $key => $product) {
-            if ($product['id'] == $id) {
-                unset($productcart[$key]);
-            }
-        }
-        Session::put('productcart', $productcart);
-
-        return view('home.home',compact("products","packages","productcart","packagecart"));
-    }
-
-    public function removePackageFromCart(Request $request){
-        $id = $request->package->id;
-        $productcart = Session::get('productcart'); 
-        $packagecart = Session::get('packagecart');
-        
-        $products = $this->productService->getListProduct();
-        $packages = $this->packageService->getListPackage();
-
-        foreach ($packagecart as $key => $package) {
-            if ($package['id'] == $id) {
-                unset($packagecart[$key]);
-            }
-        }
-        Session::put('packagecart', $packagecart);
-
-        return view('home.home',compact("products","packages","productcart","packagecart"));
+        $this->orderService->addToCart($product, $productcart, 'productcart', 'id');
+    
+        return view('home.home', [
+            'products' => $this->productService->getListProduct(),
+            'packages' => $this->packageService->getListPackage(),
+            'productcart' => Session::get('productcart'),
+            'packagecart' => Session::get('packagecart'),
+        ]);     
     }
 
     public function insertPackageToCart(Request $request){
         $package = $request->package;
-        // dd($package);
         $packagePrice = $this->packageService->caculatePrice($request);
         $package->price = $packagePrice;
-        $productcart = Session::get('productcart'); 
         $packagecart = Session::get('packagecart'); 
-        // dd($carts);
-
-        $products = $this->productService->getListProduct();
-        $packages = $this->packageService->getListPackage();
-
-        $packageIds = array_map(function ($package) {
-            return $package['id'];
-        }, $packagecart);
-
-        if (in_array($package->id, $packageIds)) {
-
-            return view('home.home',compact("products","packages","productcart","packagecart"));
-        } else {
-            $package->quantity = 1;
-            array_push($packagecart, $package);
-            Session::put('packagecart', $packagecart);
-
-            // dd($packagecart);
+        
+        $this->orderService->addToCart($package, $packagecart, 'packagecart', 'id');
+        
+        return view('home.home', [
+            'products' => $this->productService->getListProduct(),
+            'packages' => $this->packageService->getListPackage(),
+            'productcart' => Session::get('productcart'),
+            'packagecart' => Session::get('packagecart'),
+        ]);     
+    }
     
-            return view('home.home',compact("products","packages","productcart","packagecart"));
-        }
+    public function removeProductFromCart(Request $request){
+        $id = $request->product->id;
+        $productcart = Session::get('productcart'); 
+
+        $this->orderService->removeItemFromCart($id, $productcart, 'productcart');
+
+        return view('home.home', [
+            'products' => $this->productService->getListProduct(),
+            'packages' => $this->packageService->getListPackage(),
+            'productcart' => Session::get('productcart'),
+            'packagecart' => Session::get('packagecart'),
+        ]);    
+    }
+
+    public function removePackageFromCart(Request $request){
+        $id = $request->package->id;
+        $packagecart = Session::get('packagecart');
+
+        $this->orderService->removeItemFromCart($id, $packagecart, 'packagecart');
+
+        return view('home.home', [
+            'products' => $this->productService->getListProduct(),
+            'packages' => $this->packageService->getListPackage(),
+            'productcart' => Session::get('productcart'),
+            'packagecart' => Session::get('packagecart'),
+        ]);
     }
 
     public function payment(Request $request){
-        $productcart = Session::get('productcart'); 
-        $packagecart = Session::get('packagecart');
-                        
-        if(count($packagecart) > 0){
-            $packagecart = $this->orderService->updateQuantityCart($packagecart, $request, 'quantity_package');
-        }
+        $data = json_decode($request->getContent(), true);
+        dd(json_decode($request->getContent()));
         
-        if(count($productcart) > 0){
+        $productcart = Session::get('productcart'); 
+        if(!empty($productcart)){
             $productcart = $this->orderService->updateQuantityCart($productcart, $request, 'quantity_product');            
         }
-        $order = $this->orderService->store($request);
-
-        Session::put('productcart', []);
-        Session::put('packagecart', []);
         
-        $productcart = Session::get('productcart'); 
         $packagecart = Session::get('packagecart');
+        if(!empty($packagecart)){
+            $packagecart = $this->orderService->updateQuantityCart($packagecart, $request, 'quantity_package');
+        }
+        $this->orderService->store($request);
 
-        $products = $this->productService->getListProduct();
-        $packages = $this->packageService->getListPackage();
-        return view('home.home',compact("products","packages","productcart","packagecart"));
+        return redirect()->route('home.index');
     }
 
     public function destroy(Request $request){
      $this->orderService->destroy($request);
-     
-     $orders = $this->orderService->getOrders();
 
-     $this->orderService->destroy($request);
-
-     return view('orders.orders')->with("orders",$orders);
-
+     return redirect()
+     ->route('orders.index')
+     ->with('success', 'Order deleted successfully');
     }
 
     public function show(Request $request){
        $order = $request->order;
-
-       $oder_details = $this->orderService->show($request);
        $productcart = $this->orderService->getProductFromOrder($request);
        $packagecart = $this->orderService->getPackageFromOrder($request);
 
        return view('orders.show',compact("productcart","packagecart","order"));
     }
-
 
 }

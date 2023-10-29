@@ -29,6 +29,7 @@ class ProductRepository
         return $this->model->create([
             'title'=> $payload['title'],
             'price'=> $payload['price'],
+            'image'=> $payload['image'],
             'product_code'=> $payload['product_code'],
             'description'=> $payload['description'],
         ]);
@@ -39,6 +40,7 @@ class ProductRepository
         return $this->model->find($payload['id'])->update([
             'title'=> $payload['title'],
             'price'=> $payload['price'],
+            'image'=> $payload['image'],
             'product_code'=> $payload['product_code'],
             'description'=> $payload['description'],
         ]);

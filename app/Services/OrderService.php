@@ -20,18 +20,11 @@ class OrderService
     public function store(Request $request) {
         // dd($request);
         $user = Session::get('user');
-        $total = 0;
-        // Duyệt qua mảng và tính tổng
-        foreach ($request->price as $number) {
-            $total += $number;
-        }
-
         $payload = [
             "user_name"=>$user->name,
             "user_id"=>$user->id,
-            'price'=> $total,
+            'price'=> array_sum($request->price),
         ];
-
         return $this->orderRepository->store($payload);
     }
 
@@ -68,6 +61,25 @@ class OrderService
     public function getPackageFromOrder(Request $request){
         $order = $request->order;
         return $this->orderRepository->getPackageFromOrder($order->id);
+    }
+
+    public function removeItemFromCart($id, &$cart, $cartKey) {
+        foreach ($cart as $key => $item) {
+            if ($item['id'] == $id) {
+                unset($cart[$key]);
+            }
+        }
+        Session::put($cartKey, $cart);
+    }
+
+    public function addToCart($item, $cart, $cartKey, $itemKey) {
+        $cartIds = array_map(fn($item) => $item['id'], $cart);
+    
+        if (!in_array($item->$itemKey, $cartIds)) {
+            $item->quantity = 1;
+            array_push($cart, $item);
+            Session::put($cartKey, $cart);
+        }
     }
     
 }

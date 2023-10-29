@@ -37,7 +37,7 @@ class PackageController extends Controller
 
     public function store(Create $request)
     {
-        $Package = $this->packageService->store($request);
+        $this->packageService->store($request);
 
         return redirect()
         ->route('packages.index')
@@ -63,9 +63,7 @@ class PackageController extends Controller
 
     public function edit(Request $request)
     { 
-            //lấy thông tin gói sản phẩm
             $package = $request->package;
-            //lấy thông tin các sản phẩm
             $products = $this->productService->getListProduct();
             $selectedProducts = $this->packageService->show($request);
             $productIds = collect($selectedProducts)->pluck('id')->toArray();

@@ -51,6 +51,14 @@
                 @enderror
             </div>
             <div class="mb-3">
+                <label for="exampleInputPrice" class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" placeholder="upload your image"
+                    value={{ old('image') }}>
+                @error('price')
+                    <span style="color:red">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3">
                 <label for="exampleInputPrice" class="form-label">Product code</label>
                 <input type="text" name="product_code" class="form-control" placeholder="Enter your product code"
                     value={{ old('product_code') }}>

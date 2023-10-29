@@ -24,16 +24,13 @@ class UserController extends Controller
     public function edit(request $request)
     {
         $user = $request->user;
-        // dd($user);
         return view('user.edit',compact('user'));
     }
 
     public function update(request $request)
     {
         $this->userService->update($request);
-        // return view('user.edit',compact('user'));
         return redirect()->route('users.index')->with('success', $request->user->name." updated successfully");  
-
     }
 
 }

@@ -29,6 +29,16 @@
                     <span style="color:red">{{ $message }}</span>
                 @enderror
             </div>
+
+            <div class="mb-3">
+                <label for="exampleInputPrice" class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" value="{{ $product->image }}" placeholder="Enter your image">
+                @error('image')
+                <span style="color:red">{{ $message }}</span>
+                @enderror
+            </div>
+            <img src="{{ $product->image }}" width="150" height="150" alt="">
+            
             <div class="mb-3">
                 <label for="exampleInputPrice" class="form-label">Product code</label>
                 <input type="text" name="product_code" class="form-control" value="{{ $product->product_code }}"

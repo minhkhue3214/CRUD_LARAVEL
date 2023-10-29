@@ -48,6 +48,9 @@
                             <td>{{ $pr->title }}</td>
                             <td>{{ $pr->price }}</td>
                             <td>{{ $pr->product_code }}</td>
+                            <td>
+                                <img src="{{$pr->image}}" width="60" height="60" alt="">
+                            </td>
                             <td>{{ substr($pr->description, 0, 60) }}</td>
                             <td>
                                 <div class="btn-group" role="group" aria-label="Basic example">

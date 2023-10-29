@@ -56,6 +56,14 @@
                     <span style="color:red">{{ $message }}</span>
                 @enderror
             </div>
+            <div class="mb-3">
+                <label for="exampleInputPrice" class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" value="{{ $package->image }}" placeholder="Enter your image">
+                @error('image')
+                    <span style="color:red">{{ $message }}</span>
+                @enderror
+            </div>
+            <img src="{{ $package->image }}" width="150" height="150" alt="">
 
             <div class="mb-3">
                 <h2>Danh sách sản phẩm trong gói</h2>

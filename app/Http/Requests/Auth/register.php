@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Requests\Product;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class Create extends FormRequest
+class Register extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Auth::check();
+        return false;
     }
 
     /**
@@ -23,11 +22,10 @@ class Create extends FormRequest
     public function rules(): array
     {
         return [
-            "title" =>"required",
-            "price" =>"required|integer",  
-            "product_code" =>"required",  
-            "image" =>"required",  
-            "description" =>"required",
+            'name' => ['required'],
+            'email' => ['required','email'],
+            'password' => ['required'],
+            'repassword' => ['required'],
         ];
     }
 }

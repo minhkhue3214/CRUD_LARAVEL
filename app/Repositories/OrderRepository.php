@@ -33,7 +33,7 @@ class OrderRepository
         $packagecart = Session::get('packagecart');
 
         foreach ($productcart as $product) {
-            $this->order_detail->create([
+            $order->orderdetail()->create([
                 'order_id'=> $order->id,
                 'product_id'=> $product['id'],
                 'package_id'=> null,
@@ -43,7 +43,7 @@ class OrderRepository
         }
 
         foreach ($packagecart as $package) {
-            $this->order_detail->create([
+            $order->orderdetail()->create([
                 'order_id'=> $order->id,
                 'product_id'=> null,
                 'package_id'=> $package['id'],
@@ -51,8 +51,9 @@ class OrderRepository
                 'product_quantity'=> null,
             ]);
         }
-        
 
+        Session::put('productcart', []);
+        Session::put('packagecart', []);
     }
 
     public function getOrders() {
@@ -74,48 +75,43 @@ class OrderRepository
 
     public function getProductFromOrder($payload) {
 
-        $productIds = $this->order_detail->where('order_id', $payload)->pluck('product_id')->toArray();
-        $productQuantity = $this->order_detail->where('order_id', $payload)->pluck('product_quantity')->toArray();
+        $filteredProductQuantity = $this->order_detail->where('order_id', $payload)
+        ->pluck('product_quantity')
+        ->filter()
+        ->toArray();
 
-        // dd($productQuantity);
-        $filteredproductIds = array_filter($productIds, function ($value) {
-            return $value !== null;
-        });
-        
-        $filteredproductQuantity = array_filter($productQuantity, function ($value) {
-            return $value !== null;
-        });
+        $filteredProductIds = $this->order_detail->where('order_id', $payload)
+        ->pluck('product_id')
+        ->filter()
+        ->toArray();
 
 
-        $products = $this->product->whereIn('id', $filteredproductIds)->get();
+        $products = $this->product->whereIn('id', $filteredProductIds)->get();
         
         for ($i = 0; $i < count($products); $i++) {
-            // Nếu chưa có trường 'quantity', hãy tạo nó và gán giá trị
-            $products[$i]['quantity'] = $filteredproductQuantity[$i];
+            $products[$i]['quantity'] = $filteredProductQuantity[$i];
         }
         
         return $products;
-
     }
 
     public function getPackageFromOrder($payload) {
 
-        $packageIds = $this->order_detail->where('order_id', $payload)->pluck('package_id')->toArray();
-        $packageQuantity = $this->order_detail->where('order_id', $payload)->pluck('package_quantity')->toArray();
+        $filteredpackageIds = $this->order_detail->where('order_id', $payload)
+        ->pluck('package_id')
+        ->filter()
+        ->toArray();
 
-        $filteredpackageIds = array_filter($packageIds, function ($value) {
-            return $value !== null;
-        });
-        
-        $filteredpackageQuantity = array_filter($packageQuantity, function ($value) {
-            return $value !== null;
-        });
-
+        $filteredpackageQuantity = $this->order_detail->where('order_id', $payload)
+        ->pluck('package_quantity')
+        ->filter()
+        ->toArray();
+    
         $newPackageQuantity = array_values($filteredpackageQuantity);
 
         $packages = $this->package->whereIn('id', $filteredpackageIds)->get();
-        // dd($packages);
-            for ($i = 0; $i < count($packages); $i++) {
+
+        for ($i = 0; $i < count($packages); $i++) {
                 $packages[$i]['quantity'] = $newPackageQuantity[$i];
             }
 

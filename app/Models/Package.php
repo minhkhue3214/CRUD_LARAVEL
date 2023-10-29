@@ -14,7 +14,7 @@ class Package extends Model
     // protected $table = "packages";
 
     use HasFactory;
-    protected $fillable = ['name','description'];
+    protected $fillable = ['name','image','description'];
 
     public function product(){ 
         return $this->belongsToMany(Product::class,"product_packages")->withTimestamps();
