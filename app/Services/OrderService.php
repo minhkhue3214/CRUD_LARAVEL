@@ -17,15 +17,30 @@ class OrderService
         $this->orderRepository = $orderRepository;
     }
 
-    public function store(Request $request) {
-        // dd($request);
+    public function store($request) {
         $user = Session::get('user');
+        // dd($user);
+        $productList =$request->productList;
+        $packageList =$request->packageList;
+        $storedTotalPrice =$request->storedTotalPrice;
+
+
         $payload = [
             "user_name"=>$user->name,
             "user_id"=>$user->id,
-            'price'=> array_sum($request->price),
+            'price'=> $storedTotalPrice,
         ];
-        return $this->orderRepository->store($payload);
+
+
+        $order = $this->orderRepository->store($payload);
+
+        foreach ($productList as $product) {
+            $this->orderRepository->storeProductCart($order, $product);
+        }
+
+        foreach ($packageList as $package) {
+            $this->orderRepository->storePackageCart($order, $package);
+        }
     }
 
     public function getOrders(){

@@ -29,8 +29,17 @@ class PackageService
        return $this->packageRepo->show($request->package->id);
     }
 
-    public function caculatePrice(Request $request){
-        return $this->packageRepo->caculatePrice($request->package->id);
+    public function caculateListPackage($listPackage){
+        foreach ($listPackage as &$package) {
+            $id = $package['id'];
+            $packagePrice = $this->caculatePrice($id);
+            $package->price = $packagePrice;
+        }
+        return $listPackage;
+    }
+
+    public function caculatePrice($id){
+        return $this->packageRepo->caculatePrice($id);
     }
 
     public function store(Request $request) {

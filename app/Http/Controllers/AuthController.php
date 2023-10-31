@@ -74,12 +74,17 @@ class AuthController extends Controller
             return view('auth.Userlogin');
         }
         $credentials = $request->only(['email', 'password']);
+
+        $user = $this->userService->findUserByEmail($request);
+        Session::put('user', $user);
+
+        // dd($user);
         
         if (Auth::attempt($credentials)) {
             // dd("just sad");
-            return redirect()->route('home.index');
+            return redirect()->route('index');
         } else {
-            return redirect()->back()->withInput();
+            return redirect()->back()->withInput()->withErrors(['error' => 'login failed']);
         }
     }
 
@@ -93,8 +98,7 @@ class AuthController extends Controller
         if (Auth::guard('admin')->attempt($credentials)) {
             return redirect()->route('products.index');
         } else {
-            // dd("authen success");
-            return redirect()->back()->withInput();
+            return redirect()->back()->withInput()->withErrors(['error' => 'login failed']);
         }
     }
 
@@ -122,14 +126,14 @@ class AuthController extends Controller
             $data["password"] = Hash::make($request->password);
             $user = User::create($data);
             // dd($data);
-            return redirect('login')->withSuccess('You are successfully register');
+            return redirect('user-login')->withSuccess('You are successfully register');
         }
     }
     
     public function Userlogout(){
         Session::flush();
         Auth::logout();
-        return redirect("user-login");
+        return redirect("/");
     }
     public function Adminlogout(){
         Session::flush();
@@ -137,12 +141,12 @@ class AuthController extends Controller
         return redirect("admin-login");
     }
 
-    public function dashboard(){
-        // dd(Auth::check());
-        if(Auth::check()){
-            return view('dashboard');
-        }
-        return redirect('login')->withSuccess('Please login to access the dashboard page');
-    }
+    // public function dashboard(){
+    //     // dd(Auth::check());
+    //     if(Auth::check()){
+    //         return view('dashboard');
+    //     }
+    //     return redirect('login')->withSuccess('Please login to access the dashboard page');
+    // }
 
 }

@@ -62,7 +62,7 @@
                         <tr>
                             <th scope="row">{{ $package->id }}</th>
                             <td>{{ $package->name }}</td>
-                            <td>{{ $package->name }}</td>
+                            <td>{{ $package->price }}</td>
                             <td>{{ $package->quantity }}</td>
                         </tr>
                         @endforeach

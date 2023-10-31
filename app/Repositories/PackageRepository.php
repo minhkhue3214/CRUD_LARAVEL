@@ -40,11 +40,11 @@ class PackageRepository
     }
     public function caculatePrice($payload)
     {   
-        $products = $this->model->with("product")
+        $packages = $this->model->with("product")
         ->where('id', $payload)
         ->first();
 
-        $relations = $products->getRelations();
+        $relations = $packages->getRelations();
         $totalPrice = collect($relations['product'])->pluck('price')->sum();
         
         return $totalPrice;

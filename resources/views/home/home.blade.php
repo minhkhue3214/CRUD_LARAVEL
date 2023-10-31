@@ -9,8 +9,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    {{-- <script src="../../views/home/home.js"></script> --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <title>Trang chủ</title>
 </head>
@@ -34,11 +34,11 @@
                                 <a href="{{ url('register') }}" class="nav-link active" aria-current="page">Register</a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ url('login') }}" class="nav-link">Login</a>
+                                <a href="{{ url('user-login') }}" class="nav-link">Login</a>
                             </li>
                         @else
                             <li class="nav-item">
-                                <a href="{{ url('user-logout') }}" class="nav-link">Logout</a>
+                                <a href="{{ url('user-logout') }}" class="nav-link" id="logout-link">Logout</a>
                             </li>
                         @endguest
                     </ul>
@@ -83,6 +83,7 @@
                         <img src="{{ $pk->image }}" class="figure-img img-fluid rounded"
                             style="width: 200px; height: 150px;" alt="...">
                         <figcaption class="figure-caption">Tên: {{ $pk->name }}</figcaption>
+                        <figcaption class="figure-caption">Giá: {{ $pk->price }}</figcaption>
                         <figcaption class="figure-caption">Mô tả: {{ $pk->description }}.</figcaption>
                         <a type="button" class="btn btn-primary save-package"
                             data-package="{{ json_encode($pk) }}">Mua</a>
@@ -110,7 +111,7 @@
                 <form action="{{ route('home.payment') }}" method="POST" class="ms-auto me-auto mt-3"
                     enctype="multipart/form-data">
                     @csrf
-                    <h1>Sản phẩm</h1>
+                    <h4>Sản phẩm</h4>
                     <table class="table">
                         <thead>
                             <tr>
@@ -126,12 +127,13 @@
                         </tbody>
                     </table>
 
-                    <h1>Gói sản phẩm</h1>
+                    <h4>Gói sản phẩm</h4>
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Tên gói sản phẩm</th>
+                                <th scope="col">Giá gói sản phẩm</th>
                                 <th scope="col">Số lượng</th>
                                 <th scope="col">Action</th>
                             </tr>
@@ -140,6 +142,15 @@
                             <!-- Dữ liệu gói sản phẩm từ localStorage sẽ được hiển thị ở đây -->
                         </tbody>
                     </table>
+
+                    <h6 id="totalPrice">Tổng tiền cần thanh toán: </h6>
+
+                    @guest
+                        <h6>Đăng nhập để tiến hành thanh toán</h6>
+                    @else
+                        <button type="button" onclick="Payment()" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Payment</button>
+                    @endguest
 
                 </form>
 
@@ -157,119 +168,14 @@
         }
     </style>
 
-    <script>
-        let testing = "khue"
-        let productList = JSON.parse(localStorage.getItem('productList')) || [];
-        let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
-
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('save-product')) {
-                e.preventDefault();
-                console.log("productList", productList);
-
-
-                const productData = e.target.getAttribute('data-product');
-                const product = JSON.parse(productData);
-                let targetID = product.id;
-
-                var isIDExists = productList.some(function(product) {
-                    return product.id === targetID;
-                });
-
-                localStorage.setItem('productList', JSON.stringify(productList));
-
-                if (isIDExists) {
-                    alert("sản phẩm đã tồn tại trong giỏ hàng")
-                } else {
-                    const tbody = document.querySelector('.tbody-product');
-                    tbody.innerHTML = '';
-
-                    product.quantity = 1;
-                    productList.push(product);
-                    localStorage.setItem('productList', JSON.stringify(productList));
-
-                    productList.forEach(function(product, index) {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
-                <td>${product.title}</td>
-                <td>${product.price}</td>
-                <td>
-                    <input name="quantity_product[]" type="number" class="form-control"
-                        value="${product.quantity}" placeholder="quantity"
-                        aria-describedby="basic-addon1" style="width: 120px; height: 30px;">
-                </td>
-                <td>
-                    <a type="button" href="${product.id}" class="btn btn-danger delete-product">Delete</a>
-                </td>
-                `;
-                        tbody.appendChild(tr);
-                    });
-
-                }
-
-            }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('save-package')) {
-                e.preventDefault();
-
-                console.log("packageList", packageList);
-
-
-                const packageData = e.target.getAttribute('data-package');
-                const package = JSON.parse(packageData);
-                let targetID = package.id;
-
-                var isIDExists = packageList.some(function(package) {
-                    return package.id === targetID;
-                });
-
-                if (isIDExists) {
-                    alert("gói sản phẩm đã tồn tại trong giỏ hàng")
-                } else {
-                    const tbody = document.querySelector('.tbody-package');
-                    tbody.innerHTML = '';
-
-                    package.quantity = 1;
-                    packageList.push(package);
-                    localStorage.setItem('packageList', JSON.stringify(packageList));
-
-                    packageList.forEach(function(package, index) {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
-                <td>${package.name}</td>
-                <td>
-                    <input name="quantity_product[]" type="number" class="form-control"
-                        value="${package.quantity}" placeholder="quantity"
-                        aria-describedby="basic-addon1" style="width: 120px; height: 30px;">
-                </td>
-                <td>
-                    <a type="button" href="${package.id}" class="btn btn-danger delete-product">Delete</a>
-                </td>
-                `;
-                        tbody.appendChild(tr);
-                    });
-                }
-
-            }
-        });
-    </script>
-
-
-
-
-
-
-
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
     </script>
+    <script src="/home.js"></script>
+
 
 </body>
 

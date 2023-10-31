@@ -18,19 +18,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',[AuthController::class,"index"]);
-Route::get('login',[AuthController::class,"index"])->name('login');
+// Route::get('/',[AuthController::class,"index"]);
+// Route::get('login',[AuthController::class,"index"])->name('login');
 Route::get('register',[AuthController::class,"register"])->name('register');
 Route::post('post-register',[AuthController::class,"postRegister"])->name('register.post');
 
 Route::get('admin-login',[AuthController::class,"Adminlogin"])->name('admin.login');
 Route::post('admin-login',[AuthController::class,"Adminlogin"])->name('admin.dashboard');
+Route::get('admin-logout',[AuthController::class,"Adminlogout"])->name('admin.logout');
 
 Route::get('user-login',[AuthController::class,"Userlogin"])->name('user.login');
 Route::post('user-login',[AuthController::class,"Userlogin"])->name('user.home');
-
-
-Route::get('admin-logout',[AuthController::class,"Adminlogout"])->name('admin.logout');
 Route::get('user-logout',[AuthController::class,"Userlogout"])->name('user.logout');
 
 
@@ -78,12 +76,8 @@ Route::prefix('orders')->name('orders.')->middleware(['auth:admin'])->group(func
     Route::middleware(['order'])->get('/{orderId}/show', [OrderController::class, 'show'])->name('show');
 });
 
-Route::prefix('home')->name('home.')->group(function () {
-    Route::get('/', [OrderController::class, 'index'])->name('index');
-    Route::middleware(["auth",'product'])->get('/{productId}/insertproduct', [OrderController::class, 'insertProductToCart'])->name('insertproduct');
-    Route::middleware(["auth",'package'])->get('/{packagesId}/insertpackage', [OrderController::class, 'insertPackageToCart'])->name('insertpackage');
-    Route::middleware(["auth",'product'])->get('/{productId}/deleteproduct', [OrderController::class, 'removeProductFromCart'])->name('deleteproduct');
-    Route::middleware(["auth",'package'])->get('/{packagesId}/deletepackage', [OrderController::class, 'removePackageFromCart'])->name('deletepackage');
+Route::get('/', [OrderController::class, 'index'])->name('index');
+Route::prefix('home')->name('home.')->middleware(['auth'])->group(function () {
     Route::post('/payment', [OrderController::class, 'payment'])->name('payment');
 });
 

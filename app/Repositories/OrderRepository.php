@@ -23,37 +23,30 @@ class OrderRepository
     }
 
     public function store($payload) {
-        $order = $this->model->create([
+        return $this->model->create([
             'user_name'=> $payload['user_name'],
             'user_id'=> $payload['user_id'],
             'price'=> $payload['price'],
         ]);
-        
-        $productcart = Session::get('productcart'); 
-        $packagecart = Session::get('packagecart');
+    }
 
-        foreach ($productcart as $product) {
-            $order->orderdetail()->create([
-                'order_id'=> $order->id,
-                'product_id'=> $product['id'],
-                'package_id'=> null,
-                'product_quantity'=> $product['quantity'],
-                'package_quantity'=> null,
-            ]);
-        }
-
-        foreach ($packagecart as $package) {
-            $order->orderdetail()->create([
-                'order_id'=> $order->id,
-                'product_id'=> null,
-                'package_id'=> $package['id'],
-                'package_quantity'=> $package['quantity'],
-                'product_quantity'=> null,
-            ]);
-        }
-
-        Session::put('productcart', []);
-        Session::put('packagecart', []);
+    public function storeProductCart($order,$product) {
+        $order->orderdetail()->create([
+            'order_id'=> $order->id,
+            'product_id'=> $product['id'],
+            'package_id'=> null,
+            'product_quantity'=> $product['quantity'],
+            'package_quantity'=> null,
+        ]);
+    }
+    public function storePackageCart($order,$package) {
+        $order->orderdetail()->create([
+            'order_id'=> $order->id,
+            'product_id'=> null,
+            'package_id'=> $package['id'],
+            'package_quantity'=> $package['quantity'],
+            'product_quantity'=> null,
+        ]);
     }
 
     public function getOrders() {

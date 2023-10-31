@@ -25,7 +25,9 @@ class OrderController extends Controller
     public function index(Request $request){
 
         $products = $this->productService->getListProduct();
-        $packages = $this->packageService->getListPackage();
+        $listPackage = $this->packageService->getListPackage();
+        $packages = $this->packageService->caculateListPackage($listPackage);
+
         return view('home.home',compact("products","packages"));
     }
 
@@ -35,79 +37,10 @@ class OrderController extends Controller
         return view('orders.orders')->with("orders",$orders);
     }
 
-    public function insertProductToCart(Request $request){
-        $product = $request->product;
-        $productcart = Session::get('productcart'); 
-        $this->orderService->addToCart($product, $productcart, 'productcart', 'id');
-    
-        return view('home.home', [
-            'products' => $this->productService->getListProduct(),
-            'packages' => $this->packageService->getListPackage(),
-            'productcart' => Session::get('productcart'),
-            'packagecart' => Session::get('packagecart'),
-        ]);     
-    }
-
-    public function insertPackageToCart(Request $request){
-        $package = $request->package;
-        $packagePrice = $this->packageService->caculatePrice($request);
-        $package->price = $packagePrice;
-        $packagecart = Session::get('packagecart'); 
-        
-        $this->orderService->addToCart($package, $packagecart, 'packagecart', 'id');
-        
-        return view('home.home', [
-            'products' => $this->productService->getListProduct(),
-            'packages' => $this->packageService->getListPackage(),
-            'productcart' => Session::get('productcart'),
-            'packagecart' => Session::get('packagecart'),
-        ]);     
-    }
-    
-    public function removeProductFromCart(Request $request){
-        $id = $request->product->id;
-        $productcart = Session::get('productcart'); 
-
-        $this->orderService->removeItemFromCart($id, $productcart, 'productcart');
-
-        return view('home.home', [
-            'products' => $this->productService->getListProduct(),
-            'packages' => $this->packageService->getListPackage(),
-            'productcart' => Session::get('productcart'),
-            'packagecart' => Session::get('packagecart'),
-        ]);    
-    }
-
-    public function removePackageFromCart(Request $request){
-        $id = $request->package->id;
-        $packagecart = Session::get('packagecart');
-
-        $this->orderService->removeItemFromCart($id, $packagecart, 'packagecart');
-
-        return view('home.home', [
-            'products' => $this->productService->getListProduct(),
-            'packages' => $this->packageService->getListPackage(),
-            'productcart' => Session::get('productcart'),
-            'packagecart' => Session::get('packagecart'),
-        ]);
-    }
-
-    public function payment(Request $request){
-        $data = json_decode($request->getContent(), true);
-        dd(json_decode($request->getContent()));
-        
-        $productcart = Session::get('productcart'); 
-        if(!empty($productcart)){
-            $productcart = $this->orderService->updateQuantityCart($productcart, $request, 'quantity_product');            
-        }
-        
-        $packagecart = Session::get('packagecart');
-        if(!empty($packagecart)){
-            $packagecart = $this->orderService->updateQuantityCart($packagecart, $request, 'quantity_package');
-        }
+    public function payment(Request $request) {
         $this->orderService->store($request);
 
-        return redirect()->route('home.index');
+        return "Success";
     }
 
     public function destroy(Request $request){
@@ -119,9 +52,11 @@ class OrderController extends Controller
     }
 
     public function show(Request $request){
+
        $order = $request->order;
        $productcart = $this->orderService->getProductFromOrder($request);
-       $packagecart = $this->orderService->getPackageFromOrder($request);
+       $listPackage = $this->orderService->getPackageFromOrder($request);
+       $packagecart = $this->packageService->caculateListPackage($listPackage);
 
        return view('orders.show',compact("productcart","packagecart","order"));
     }

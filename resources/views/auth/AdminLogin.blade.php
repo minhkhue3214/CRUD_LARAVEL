@@ -15,7 +15,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8 offset-2">
-                    <h2>Login Page</h2>
+                    <h2>Dashboard Page</h2>
 
                     @if ($errors->has('error'))
                         <div id="danger-alert" class="alert alert-danger">{{ $errors->first('error') }}</div>
