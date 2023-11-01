@@ -34,7 +34,7 @@ Route::get('logout',[AuthController::class,"logout"])->name('logout');
 
 // Route::put('edit-package/{id}',[PackageController::class,"update"])->name('package.update');
 
-Route::prefix('products')->name('products.')->middleware(['auth:admin'])->group(function () {
+Route::prefix('products')->name('products.')->middleware(['authenrole:admin'])->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::get('/create', [ProductController::class, 'create'])->name('create');
     Route::post('/store', [ProductController::class, 'store'])->name('store');
@@ -48,7 +48,7 @@ Route::prefix('products')->name('products.')->middleware(['auth:admin'])->group(
     
 });
 
-Route::prefix('packages')->name('packages.')->middleware(['auth:admin'])->group(function () {
+Route::prefix('packages')->name('packages.')->middleware(['authenrole:admin'])->group(function () {
     Route::get('/', [PackageController::class, 'index'])->name('index');
     Route::get('/create',[PackageController::class,"create"])->name('create');
     Route::post('/store',[PackageController::class,"store"])->name('store');
@@ -61,7 +61,7 @@ Route::prefix('packages')->name('packages.')->middleware(['auth:admin'])->group(
     });
 });
 
-Route::prefix('users')->name('users.')->middleware(['auth:admin'])->group(function () {
+Route::prefix('users')->name('users.')->middleware(['authenrole:admin'])->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('index');
 
     Route::middleware(['user'])->group(function () {
@@ -70,14 +70,14 @@ Route::prefix('users')->name('users.')->middleware(['auth:admin'])->group(functi
     });
 });
 
-Route::prefix('orders')->name('orders.')->middleware(['auth:admin'])->group(function () {
+Route::prefix('orders')->name('orders.')->middleware(['authenrole:admin'])->group(function () {
     Route::get('/', [OrderController::class, 'orders'])->name('index');
     Route::middleware(['order'])->delete('/{orderId}/destroy', [OrderController::class, 'destroy'])->name('destroy');
     Route::middleware(['order'])->get('/{orderId}/show', [OrderController::class, 'show'])->name('show');
 });
 
 Route::get('/', [OrderController::class, 'index'])->name('index');
-Route::prefix('home')->name('home.')->middleware(['auth'])->group(function () {
+Route::prefix('home')->name('home.')->middleware(['authenrole:web'])->group(function () {
     Route::post('/payment', [OrderController::class, 'payment'])->name('payment');
 });
 

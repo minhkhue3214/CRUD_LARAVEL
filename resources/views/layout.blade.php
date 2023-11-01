@@ -22,12 +22,7 @@
             </div>
 
             <ul class="nav navbar-nav navbar-right">
-
-                @guest
-                    <li><a href="{{ url('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                @else
                     <li><a href="{{ url('logout') }}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
-                @endguest
 
             </ul>
         </div>

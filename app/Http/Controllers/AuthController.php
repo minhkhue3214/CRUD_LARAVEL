@@ -35,8 +35,10 @@ class AuthController extends Controller
     public function Userlogin(Request $request)
     {
         if ($request->getMethod() == 'GET') {
+            Auth::logout();
             return view('auth.Userlogin');
         }
+
         $credentials = $request->only(['email', 'password']);
 
         $user = $this->userService->findUserByEmail($request);
@@ -53,8 +55,11 @@ class AuthController extends Controller
     public function Adminlogin(Request $request)
     {
         if ($request->getMethod() == 'GET') {
+            Auth::logout();
             return view('auth.Adminlogin');
         }
+
+
         
         $credentials = $request->only(['email', 'password']);
         if (Auth::guard('admin')->attempt($credentials)) {

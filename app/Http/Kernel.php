@@ -68,6 +68,6 @@ class Kernel extends HttpKernel
         'package' => \App\Http\Middleware\PackageMiddleware::class,
         'user' => \App\Http\Middleware\UserMiddleware::class,
         'order' => \App\Http\Middleware\OrderMiddleware::class,
-        'admin' => \App\Http\Middleware\AdminAuth::class,
+        'authenrole' => \App\Http\Middleware\Authenrole::class,
     ];
 }

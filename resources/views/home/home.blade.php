@@ -29,7 +29,7 @@
                 </ul>
                 <span class="navbar-text">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        @guest
+                        {{-- @guest
                             <li class="nav-item">
                                 <a href="{{ url('register') }}" class="nav-link active" aria-current="page">Register</a>
                             </li>
@@ -40,7 +40,19 @@
                             <li class="nav-item">
                                 <a href="{{ url('logout') }}" class="nav-link" id="logout-link">Logout</a>
                             </li>
-                        @endguest
+                            @endguest --}}
+                        @auth
+                            <li class="nav-item">
+                                <a href="{{ url('logout') }}" class="nav-link" id="logout-link">Logout</a>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a href="{{ url('register') }}" class="nav-link active" aria-current="page">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url('user-login') }}" class="nav-link">Login</a>
+                            </li>
+                        @endauth
                     </ul>
                 </span>
             </div>
@@ -145,12 +157,19 @@
 
                     <h6 id="totalPrice">Tổng tiền cần thanh toán: </h6>
 
-                    @guest
+                    {{-- @guest
                         <h6>Đăng nhập để tiến hành thanh toán</h6>
                     @else
                         <button type="button" onclick="Payment()" class="btn btn-secondary"
                             data-bs-dismiss="modal">Payment</button>
-                    @endguest
+                    @endguest --}}
+
+                    @auth
+                        <button type="button" onclick="Payment()" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Payment</button>
+                    @else
+                        <h6>Đăng nhập để tiến hành thanh toán</h6>
+                    @endauth
 
                 </form>
 
