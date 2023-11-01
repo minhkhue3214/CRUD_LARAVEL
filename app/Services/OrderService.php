@@ -19,11 +19,9 @@ class OrderService
 
     public function store($request) {
         $user = Session::get('user');
-        // dd($user);
         $productList =$request->productList;
         $packageList =$request->packageList;
         $storedTotalPrice =$request->storedTotalPrice;
-
 
         $payload = [
             "user_name"=>$user->name,
@@ -31,15 +29,18 @@ class OrderService
             'price'=> $storedTotalPrice,
         ];
 
-
         $order = $this->orderRepository->store($payload);
 
-        foreach ($productList as $product) {
-            $this->orderRepository->storeProductCart($order, $product);
+        if(is_array($productList)){
+            foreach ($productList as $product) {
+                $this->orderRepository->storeProductCart($order, $product);
+            }
         }
 
-        foreach ($packageList as $package) {
-            $this->orderRepository->storePackageCart($order, $package);
+        if(is_array($packageList)){
+            foreach ($packageList as $package) {
+                $this->orderRepository->storePackageCart($order, $package);
+            }
         }
     }
 

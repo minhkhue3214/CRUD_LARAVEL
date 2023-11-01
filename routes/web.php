@@ -25,11 +25,11 @@ Route::post('post-register',[AuthController::class,"postRegister"])->name('regis
 
 Route::get('admin-login',[AuthController::class,"Adminlogin"])->name('admin.login');
 Route::post('admin-login',[AuthController::class,"Adminlogin"])->name('admin.dashboard');
-Route::get('admin-logout',[AuthController::class,"Adminlogout"])->name('admin.logout');
 
 Route::get('user-login',[AuthController::class,"Userlogin"])->name('user.login');
 Route::post('user-login',[AuthController::class,"Userlogin"])->name('user.home');
-Route::get('user-logout',[AuthController::class,"Userlogout"])->name('user.logout');
+
+Route::get('logout',[AuthController::class,"logout"])->name('logout');
 
 
 // Route::put('edit-package/{id}',[PackageController::class,"update"])->name('package.update');

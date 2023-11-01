@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class UserAdmin extends Authenticatable
 {
     use HasFactory,Notifiable;
-
+    protected $guard = 'admin';
     protected $table = 'user_admins';
 
     protected $fillable = [

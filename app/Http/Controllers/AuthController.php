@@ -31,42 +31,6 @@ class AuthController extends Controller
         return view("auth.UserLogin");
     }
 
-    // public function postLogin(Request $request){
-    //     $request->validate([
-    //         "email" =>"required|email",
-    //         "password" =>"required",  
-    //     ]);
-
-    //     $checkLoginCredentials = $request->only('email','password');
-        
-    //     if(Auth::attempt($checkLoginCredentials)){
-    //         // $user = $this->userService->findUserByEmail($request);
-    //         // Session::put('user', $user);
-
-    //         // $products = $this->productService->getListProduct();
-    //         // $packages = $this->packageService->getListPackage();
-
-    //         // $productcart = [];
-    //         // $packagecart = [];
-    //         // Session::put('productcart', $productcart);
-    //         // Session::put('packagecart', $packagecart);
-
-    //         // if($user->role == 'user'){
-
-    //         //     return view('home.home',compact("products","packages","productcart","packagecart")); 
-    //         // }else{
-    //         //     return redirect('products')->withSuccess('You are successfully loggedin'); 
-    //         // }
-
-    //         if (Auth::guard('admin')) {
-    //             dd('Testing admin');
-    //         }
-            
-    //         return redirect('products')->withSuccess('You are successfully loggedin'); 
-    //     }
-
-    //     // return redirect('login')->withErrors(['error' => 'Your email and password are not match']);
-    // }
 
     public function Userlogin(Request $request)
     {
@@ -77,8 +41,6 @@ class AuthController extends Controller
 
         $user = $this->userService->findUserByEmail($request);
         Session::put('user', $user);
-
-        // dd($user);
         
         if (Auth::attempt($credentials)) {
             // dd("just sad");
@@ -129,24 +91,17 @@ class AuthController extends Controller
             return redirect('user-login')->withSuccess('You are successfully register');
         }
     }
-    
-    public function Userlogout(){
-        Session::flush();
-        Auth::logout();
-        return redirect("/");
-    }
-    public function Adminlogout(){
-        Session::flush();
-        Auth::logout();
-        return redirect("admin-login");
-    }
 
-    // public function dashboard(){
-    //     // dd(Auth::check());
-    //     if(Auth::check()){
-    //         return view('dashboard');
-    //     }
-    //     return redirect('login')->withSuccess('Please login to access the dashboard page');
-    // }
+    public function logout(){
+        if(Auth::guard("admin")->check()){
+            Session::flush();
+            Auth::logout();
+            return redirect("admin-login");
+        }else{
+            Session::flush();
+            Auth::logout();
+            return redirect("/");
+        }
+    }
 
 }

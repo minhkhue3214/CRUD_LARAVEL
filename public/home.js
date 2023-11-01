@@ -18,10 +18,12 @@ function calculateTotalPrice(arr) {
 }
 
 const resetCart = () => {
-    let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
+    console.log("resetCart");
     let productList = JSON.parse(localStorage.getItem('productList')) || [];
+    let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
 
     if (productList.length > 0) {
+        let productList = JSON.parse(localStorage.getItem('productList')) || [];
         const tbody = document.querySelector('.tbody-product');
         tbody.innerHTML = '';
         productList.forEach(function (product, index) {
@@ -31,9 +33,10 @@ const resetCart = () => {
                 <td>${product.title}</td>
                 <td>${product.price}</td>
                 <td>
-                    <input name="quantity_product[]" type="number" class="form-control"
-                        value="${product.quantity}" placeholder="quantity"
-                        aria-describedby="basic-addon1" style="width: 120px; height: 30px;">
+                <input name="quantity_product[]" type="number" class="form-control"
+                    value="${product.quantity}" placeholder="quantity"
+                    aria-describedby="basic-addon1" style="width: 120px; height: 30px;"
+                    oninput="updateProductQuantity(this,${product.id})">
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger delete-product" onClick="deleteProduct(${product.id})">Delete</button>
@@ -48,8 +51,11 @@ const resetCart = () => {
     }
 
     if (packageList.length > 0) {
+        let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
+        console.log("packageList", packageList.length);
         const tbody = document.querySelector('.tbody-package');
         tbody.innerHTML = '';
+
         packageList.forEach(function (package, index) {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -57,9 +63,10 @@ const resetCart = () => {
                 <td>${package.name}</td>
                 <td>${package.price}</td>
                 <td>
-                    <input name="quantity_product[]" type="number" class="form-control"
-                        value="${package.quantity}" placeholder="quantity"
-                        aria-describedby="basic-addon1" style="width: 120px; height: 30px;">
+                <input name="quantity_product[]" type="number" class="form-control"
+                    value="${package.quantity}" placeholder="quantity"
+                    aria-describedby="basic-addon1" style="width: 120px; height: 30px;"
+                    oninput="updatePackageQuantity(this,${package.id})">
                 </td>
                 <td>
                     <button type="button" class="btn btn-danger delete-product" onClick="deletePackage(${package.id})">Delete</button>
@@ -67,11 +74,11 @@ const resetCart = () => {
                 `;
             tbody.appendChild(tr);
         });
-
     } else {
         const tbody = document.querySelector('.tbody-package');
         tbody.innerHTML = '';
     }
+
     caculatePrice()
 }
 
@@ -172,64 +179,6 @@ document.addEventListener('click', function (e) {
     }
 });
 
-(function () {
-    let productList = JSON.parse(localStorage.getItem('productList')) || [];
-    let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
-
-    if (productList.length > 0) {
-        let productList = JSON.parse(localStorage.getItem('productList')) || [];
-        const tbody = document.querySelector('.tbody-product');
-        tbody.innerHTML = '';
-        productList.forEach(function (product, index) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
-                <td>${product.title}</td>
-                <td>${product.price}</td>
-                <td>
-                <input name="quantity_product[]" type="number" class="form-control"
-                    value="${product.quantity}" placeholder="quantity"
-                    aria-describedby="basic-addon1" style="width: 120px; height: 30px;"
-                    oninput="updateProductQuantity(this,${product.id})">
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger delete-product" onClick="deleteProduct(${product.id})">Delete</button>
-                </td>
-                `;
-            tbody.appendChild(tr);
-        });
-
-    }
-
-    if (packageList.length > 0) {
-        let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
-        console.log("packageList", packageList.length);
-        const tbody = document.querySelector('.tbody-package');
-        tbody.innerHTML = '';
-
-        packageList.forEach(function (package, index) {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <th scope="row">${index + 1}</th>
-                <td>${package.name}</td>
-                <td>${package.price}</td>
-                <td>
-                <input name="quantity_product[]" type="number" class="form-control"
-                    value="${package.quantity}" placeholder="quantity"
-                    aria-describedby="basic-addon1" style="width: 120px; height: 30px;"
-                    oninput="updatePackageQuantity(this,${package.id})">
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger delete-product" onClick="deletePackage(${package.id})">Delete</button>
-                </td>
-                `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    caculatePrice()
-})();
-
 document.getElementById("logout-link").addEventListener("click", function (event) {
     localStorage.clear();
 });
@@ -258,6 +207,11 @@ function updateProductQuantity(productQuantity, productId) {
 
     var newValue = productQuantity.value;
 
+    if (newValue == 0) {
+        deleteProduct(productId);
+        return
+    }
+
     const updatedProducts = productList.map(product => {
         if (product.id === productId) {
             return {
@@ -276,6 +230,11 @@ function updatePackageQuantity(packageQuantity, packageId) {
     let packageList = JSON.parse(localStorage.getItem('packageList')) || [];
 
     var newValue = packageQuantity.value;
+
+    if (newValue == 0) {
+        deletePackage(packageId);
+        return
+    }
 
     const updatedPackages = packageList.map(package => {
         if (package.id === packageId) {
@@ -332,3 +291,5 @@ const Payment = () => {
     });
 
 }
+
+resetCart()

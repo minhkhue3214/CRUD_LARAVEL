@@ -40,7 +40,12 @@ class OrderController extends Controller
     public function payment(Request $request) {
         $this->orderService->store($request);
 
-        return "Success";
+        $response = [
+            "status" => 200,
+            "message" => "Yêu cầu được xử lý thành công."
+        ];
+    
+        return response()->json($response);
     }
 
     public function destroy(Request $request){

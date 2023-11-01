@@ -26,7 +26,7 @@
                 @guest
                     <li><a href="{{ url('login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                 @else
-                    <li><a href="{{ url('admin-logout') }}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+                    <li><a href="{{ url('logout') }}"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
                 @endguest
 
             </ul>
