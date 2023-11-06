@@ -19,13 +19,20 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class,"order_id");
     }
 
-    public function products() {
-        return $this->hasMany(Product::class);
+    // public function products() {
+    //     return $this->hasMany(Product::class);
+    // }
+
+    // public function packages()
+    // {
+    //     return $this->hasMany(Package::class);
+    // }
+
+    public function package(){ 
+        return $this->belongsToMany(Package::class,"order_details");
     }
 
-    public function packages()
-    {
-        return $this->hasMany(Package::class);
+    public function product(){ 
+        return $this->belongsToMany(Product::class,"order_details");
     }
-
 }

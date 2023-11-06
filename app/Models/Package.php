@@ -19,5 +19,9 @@ class Package extends Model
     public function product(){ 
         return $this->belongsToMany(Product::class,"product_packages")->withTimestamps();
     }
+
+    public function order(){ 
+        return $this->belongsToMany(Package::class,"order_details");
+    }
     
 }
