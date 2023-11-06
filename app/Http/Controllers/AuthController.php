@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Requests\Auth\Register;
+// use App\Http\Requests\Auth\Register;
+use App\Http\Requests\Auth\register;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 use App\Services\UserService;
 use App\Services\PackageService;
 use App\Services\ProductService;
+use App\Services\AuthService;
 
 // use Session;
 
@@ -19,11 +21,13 @@ class AuthController extends Controller
     protected UserService $userService;
     protected packageService $packageService;
     protected ProductService $productService;
+    protected AuthService $authService;
 
-    public function __construct(UserService $userService,ProductService $productService,PackageService $packageService) {
+    public function __construct(UserService $userService,ProductService $productService,PackageService $packageService,AuthService $authService) {
         $this->userService = $userService;
         $this->packageService = $packageService;
         $this->productService = $productService;
+        $this->authService = $authService;
     }
 
     //
@@ -41,8 +45,7 @@ class AuthController extends Controller
 
         $credentials = $request->only(['email', 'password']);
 
-        $user = $this->userService->findUserByEmail($request);
-        Session::put('user', $user);
+        // $user = $this->userService->findUserByEmail($request);
         
         if (Auth::attempt($credentials)) {
             // dd("just sad");
@@ -50,6 +53,7 @@ class AuthController extends Controller
         } else {
             return redirect()->back()->withInput()->withErrors(['error' => 'login failed']);
         }
+
     }
 
     public function Adminlogin(Request $request)
@@ -58,8 +62,6 @@ class AuthController extends Controller
             Auth::logout();
             return view('auth.Adminlogin');
         }
-
-
         
         $credentials = $request->only(['email', 'password']);
         if (Auth::guard('admin')->attempt($credentials)) {
@@ -69,42 +71,39 @@ class AuthController extends Controller
         }
     }
 
-    public function register(){
+    public function registerFormUser(){
         return view("auth.register");
     }
 
-    public function postRegister(Request $request){
-        $request->validate([
-            "name" =>"required",
-            "email" =>"required|email",
-            "password" =>"required",  
-            "repassword" =>"required",  
-        ]);
-
-        if($request->input("password") != $request->input("repassword")){
-            return redirect('register')->withErrors(['error' => 'Your repassword and password are not match']);
-        }
-
-        if(!empty($user)){
-            return redirect('register')->withErrors(['error' => 'Registration failed , try again']);
-        }else{
-            $data["name"] = $request->name;
-            $data["email"] = $request->email;
-            $data["password"] = Hash::make($request->password);
-            $user = User::create($data);
-            // dd($data);
-            return redirect('user-login')->withSuccess('You are successfully register');
-        }
+    public function registerFormAdmin(){
+        return view("auth.Adminregister");
     }
 
-    public function logout(){
+    public function adminRegister(Request $request){
+
+        $user = $this->authService->adminRegister($request);
+        // dd($user);
+        if (empty($user)) return redirect('admin-form')->withErrors(['error' => 'Registration failed , try again']);
+        return redirect('admin-login')->withSuccess('You are successfully register');
+    }
+
+    public function userRegister(Register $request){
+
+        $user = $this->authService->userRegister($request);
+        // dd($user);
+        if (empty($user)) return redirect('user-form')->withErrors(['error' => 'Registration failed , try again']);
+        return redirect('user-login')->withSuccess('You are successfully register');
+
+    }
+
+    public function logout(Request $request){
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        // Session::flush();
+        Auth::logout();
         if(Auth::guard("admin")->check()){
-            Session::flush();
-            Auth::logout();
             return redirect("admin-login");
         }else{
-            Session::flush();
-            Auth::logout();
             return redirect("/");
         }
     }

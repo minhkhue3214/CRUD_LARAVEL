@@ -11,6 +11,15 @@
     </head>
 
     <body>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                </div>
+                <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{{ url('admin-form') }}"><span class="glyphicon glyphicon-log-in"></span>Admin Register</a></li>
+                </ul>
+            </div>
+        </nav>
 
         <div class="container">
             <div class="row">

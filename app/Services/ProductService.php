@@ -34,7 +34,12 @@ class ProductService
     }
 
     public function getListProduct(){
-        return $this->productRepo->getListProduct();
+        try {
+            return $this->productRepo->getListProduct();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     // public function Store(Request $request) {
@@ -49,6 +54,7 @@ class ProductService
     // }
 
     public function Store(Request $request) {
+        DB::beginTransaction();
         try{
             if($request->has('image')){
                 $file = $request->image;
@@ -70,8 +76,10 @@ class ProductService
             ];
 
             // dd($payload);
+            DB::commit();
             return $this->productRepo->store($payload);
         }catch(Exception $e){
+            DB::rollBack();
             Log::error($e->getMessage());
             return null;
         }
@@ -79,7 +87,8 @@ class ProductService
 
     public function update(Request $request) {
         // dd($request->product->image);
-
+        DB::beginTransaction();
+        try{
         if($request->has('image')){
             $file = $request->image;
             $extension = $request->image->extension();
@@ -108,30 +117,22 @@ class ProductService
             ];
         }
 
+        DB::commit();
         return $this->productRepo->update($payload);
+        }catch(Exception $e){
+        DB::rollBack();
+        Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function delete(Request $request){
-        // dd($request->product->id);
-        return $this->productRepo->delete($request->product->id);
-    }
-
-    public function productInPackage($productsRelation){
-        // dd($productsRelation);
-        foreach ($productsRelation as $item) {
-           $productPackageIds[] = $item['product_id'];
+        try {
+            return $this->productRepo->delete($request->product->id);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return false;
         }
-        // dd($request->product->id);
-        return $this->productRepo->productInPackage($productPackageIds);
-    }
-
-    public function priceInPackage($productsRelation){
-            // dd($productsRelation);
-            foreach ($productsRelation as $item) {
-                $productPackageIds[] = $item['product_id'];
-             }
-             // dd($request->product->id);
-             return $this->productRepo->productInPackage($productPackageIds);
     }
 
 }

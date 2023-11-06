@@ -11,11 +11,20 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ url('admin-login') }}"><span class="glyphicon glyphicon-log-in"></span>Admin Login</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <div class="container">
         <div class="row">
             <div class="col-md-8 offset-2">
-                <h2>Register Page</h2>
+                <h2>Admin Register Page</h2>
 
                 @if ($errors->has('error'))
                     <div id="danger-alert" class="alert alert-danger">{{ $errors->first('error') }}</div>
@@ -28,7 +37,7 @@
                 </script>
 
 
-                <form method="post" action="{{ route('register.user') }}">
+                <form method="post" action="{{ route('register.admin') }}">
                     @csrf
                     <div class="form-group row">
                         <label class="col-md-4">Name</label>

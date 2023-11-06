@@ -8,6 +8,7 @@ use Exception;
 use App\Repositories\OrderRepository;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class OrderService
 {
@@ -18,83 +19,98 @@ class OrderService
     }
 
     public function store($request) {
-        $user = Session::get('user');
-        $productList =$request->productList;
-        $packageList =$request->packageList;
-        $storedTotalPrice =$request->storedTotalPrice;
-
-        $payload = [
-            "user_name"=>$user->name,
-            "user_id"=>$user->id,
-            'price'=> $storedTotalPrice,
-        ];
-
-        $order = $this->orderRepository->store($payload);
-
-        if(is_array($productList)){
-            foreach ($productList as $product) {
-                $this->orderRepository->storeProductCart($order, $product);
+        // SQL transaction;
+        DB::beginTransaction();
+        try{
+            $user = Auth::guard('web')->user();
+            // dd($user->name);
+    
+            $productList =$request->productList;
+            $packageList =$request->packageList;
+            $storedTotalPrice =$request->storedTotalPrice;
+    
+            // "user_name"=>$user->name,
+    
+            $payload = [
+                "user_name"=>$user->name,
+                "user_id"=>$user->id,
+                'price'=> $storedTotalPrice,
+            ];
+    
+            $order = $this->orderRepository->store($payload);
+    
+            if(is_array($productList)){
+                foreach ($productList as $product) {
+                    $this->orderRepository->storeProductIntoOrder($order, $product);
+                }
             }
+    
+            if(is_array($packageList)){
+                foreach ($packageList as $package) {
+                    $this->orderRepository->storePackageIntoOrder($order, $package);
+                }
+            }
+            
+        DB::commit();
+        }catch(Exception $e){
+            Log::error($e->getMessage());
+        DB::rollback();
+            return null;
         }
 
-        if(is_array($packageList)){
-            foreach ($packageList as $package) {
-                $this->orderRepository->storePackageCart($order, $package);
-            }
-        }
     }
 
     public function getOrders(){
-        return $this->orderRepository->getOrders();
-    }
-
-    function updateQuantityCart($cart,Request $request, $quantityKey) {
-        if (count($request->$quantityKey) > 0) {
-            foreach ($request->$quantityKey as $itemId => $newQuantity) {
-                if (isset($cart[$itemId])) {
-                    $cart[$itemId]['quantity'] = $newQuantity;
-                }
-            }
+        try {
+            return $this->orderRepository->getOrders();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
         }
-        return $cart;
     }
 
     public function destroy(Request $request){
-        $order = $request->order;
-        return $this->orderRepository->destroy($order);
+        try {
+            $order = $request->order;
+            if ($order) {
+                return $this->orderRepository->destroy($order);
+            }        
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function show(Request $request){
-        $order = $request->order;
-        return $this->orderRepository->show($order);
+        try {
+            $order = $request->order;
+            if ($order) {
+                return $this->orderRepository->show($order);
+            } 
+                 
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function getProductFromOrder(Request $request){
-        $order = $request->order;
-        return $this->orderRepository->getProductFromOrder($order->id);
+        try {
+            $order = $request->order;
+            return $this->orderRepository->getProductFromOrder($order->id);     
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function getPackageFromOrder(Request $request){
-        $order = $request->order;
-        return $this->orderRepository->getPackageFromOrder($order->id);
-    }
-
-    public function removeItemFromCart($id, &$cart, $cartKey) {
-        foreach ($cart as $key => $item) {
-            if ($item['id'] == $id) {
-                unset($cart[$key]);
-            }
-        }
-        Session::put($cartKey, $cart);
-    }
-
-    public function addToCart($item, $cart, $cartKey, $itemKey) {
-        $cartIds = array_map(fn($item) => $item['id'], $cart);
-    
-        if (!in_array($item->$itemKey, $cartIds)) {
-            $item->quantity = 1;
-            array_push($cart, $item);
-            Session::put($cartKey, $cart);
+        try {
+            $order = $request->order;
+            return $this->orderRepository->getPackageFromOrder($order->id); 
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
         }
     }
     

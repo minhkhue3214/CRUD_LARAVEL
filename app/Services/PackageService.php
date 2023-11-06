@@ -5,6 +5,8 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Repositories\PackageRepository;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class PackageService
 {
@@ -15,18 +17,34 @@ class PackageService
     }
 
     public function index(Request $request) {
-        $search = $request['search'] ?? "";
-        return $this->packageRepo->index($search);
+        try {
+            $search = $request['search'] ?? "";
+            return $this->packageRepo->index($search);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function getListPackage(){
-        return $this->packageRepo->getListPackage();
+        try {
+            return $this->packageRepo->getListPackage();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function show(Request $request){
         // dd($request->package->id);
+        try {
+            return $this->packageRepo->show($request->package->id);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
 
-       return $this->packageRepo->show($request->package->id);
+       
     }
 
     public function caculateListPackage($listPackage){
@@ -43,30 +61,38 @@ class PackageService
     }
 
     public function store(Request $request) {
-
-        if($request->has('image')){
-            $file = $request->image;
-            $extension = $request->image->extension();
-            // $file_name = $file->getClientoriginalName();
-            $file_name = time().'-'.'package.'. $extension;
-            // dd($file_name);
-            $file->move(public_path('uploads'),$file_name); 
-            $request->merge(['image'=>'/uploads/'.$file_name]);
-            // dd($extension);
+        DB::beginTransaction();
+        try {
+            if($request->has('image')){
+                $file = $request->image;
+                $extension = $request->image->extension();
+                // $file_name = $file->getClientoriginalName();
+                $file_name = time().'-'.'package.'. $extension;
+                // dd($file_name);
+                $file->move(public_path('uploads'),$file_name); 
+                $request->merge(['image'=>'/uploads/'.$file_name]);
+                // dd($extension);
+            }
+    
+            $payload = [
+                "product_list"=>$request->input("product_list"),
+                'package_name'=> $request->input('package_name'),
+                'image'=> $request->input('image'),
+                'package_description'=> $request->input('package_description'),
+            ];
+            DB::commit();
+            return $this->packageRepo->store($payload);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return null;
         }
-
-        $payload = [
-            "product_list"=>$request->input("product_list"),
-            'package_name'=> $request->input('package_name'),
-            'image'=> $request->input('image'),
-            'package_description'=> $request->input('package_description'),
-        ];
-
-        return $this->packageRepo->store($payload);
     }
 
 
     public function update(Request $request) {
+        DB::beginTransaction();
+        try {
         if($request->has('image')){
             $file = $request->image;
             $extension = $request->image->extension();
@@ -93,11 +119,22 @@ class PackageService
             ];
         }
 
+        DB::commit();
         return $this->packageRepo->update($payload);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 
     public function delete(Request $request){
-        // dd($request->package->id);
-        return $this->packageRepo->delete($request->package->id);
+        try {
+            return $this->packageRepo->delete($request->package->id);
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return null;
+        }
     }
 }

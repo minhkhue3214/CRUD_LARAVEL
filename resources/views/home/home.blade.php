@@ -47,7 +47,7 @@
                             </li>
                         @else
                             <li class="nav-item">
-                                <a href="{{ url('register') }}" class="nav-link active" aria-current="page">Register</a>
+                                <a href="{{ url('user-form') }}" class="nav-link active" aria-current="page">Register</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ url('user-login') }}" class="nav-link">Login</a>

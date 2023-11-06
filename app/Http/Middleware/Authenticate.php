@@ -19,7 +19,9 @@ class Authenticate extends Middleware
             return null;
         } else {
             // dd($request);
-            Session::flush();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            // Session::flush();
             Auth::logout();
             return route('admin.login');
         }

@@ -12,7 +12,7 @@ class Create extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::check();
+        return Auth::guard('admin')->check();
     }
 
     /**

@@ -30,22 +30,31 @@ class OrderRepository
         ]);
     }
 
-    public function storeProductCart($order,$product) {
+    // public function storeProductIntoOrder($order,$product) {
+    //     $order->product()->attach([
+    //         'product_id'=> $product['id'],
+    //         'product_quantity'=> $product['quantity'],
+    //     ]);
+    // }
+    
+    // public function storePackageIntoOrder($order,$package) {
+    //     $order->package()->attach([
+    //         'package_id'=> $package['id'],
+    //         'package_quantity'=> $package['quantity'],
+    //     ]);
+    // }
+
+    public function storeProductIntoOrder($order,$product) {
+        // dd($order->product());
         $order->orderdetail()->create([
-            'order_id'=> $order->id,
             'product_id'=> $product['id'],
-            'package_id'=> null,
             'product_quantity'=> $product['quantity'],
-            'package_quantity'=> null,
         ]);
     }
-    public function storePackageCart($order,$package) {
+    public function storePackageIntoOrder($order,$package) {
         $order->orderdetail()->create([
-            'order_id'=> $order->id,
-            'product_id'=> null,
             'package_id'=> $package['id'],
             'package_quantity'=> $package['quantity'],
-            'product_quantity'=> null,
         ]);
     }
 
@@ -54,16 +63,12 @@ class OrderRepository
     }
 
     public function destroy($order){
-        if ($order) {
             $order->orderdetail()->delete();
             $order->delete(); 
-        }
     }
 
-    public function show($order) {
-        if ($order) {
+    public function show($order) {        
            return $order->orderdetail()->get();
-        }
     }
 
     public function getProductFromOrder($payload) {

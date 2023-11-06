@@ -11,7 +11,7 @@ class Register extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
